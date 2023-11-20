@@ -73,7 +73,7 @@ const divideTriangle = (
 };
 
 const tetrahedron = (a, b, c, d, pointsArray, planetInfo, colorArray) => {
-  const n = 4;
+  const n = 3;
   divideTriangle(a, b, c, n, pointsArray, planetInfo, colorArray);
   divideTriangle(d, c, b, n, pointsArray, planetInfo, colorArray);
   divideTriangle(a, d, b, n, pointsArray, planetInfo, colorArray);
