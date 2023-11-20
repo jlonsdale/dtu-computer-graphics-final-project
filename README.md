@@ -13,4 +13,4 @@ by big O and wdj
 - starting with week 5 worksheet for rendering a sphere
 - remove some of the interactive elements that wont be used in this project
 - remove rotation of camera
-- wrap all sphere making code in a method:
+- wrap all sphere making code in a method that takes: (dx dy radius and distance)
