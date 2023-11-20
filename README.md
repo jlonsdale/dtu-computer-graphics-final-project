@@ -12,3 +12,4 @@ task 6 - allow user to pitch and move the camera and zoom
 
 starting with week 5 worksheet for rendering a sphere
 remove some of the interactive elements that wont be used in this project
+remove rotation of camera
