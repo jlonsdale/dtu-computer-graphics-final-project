@@ -16,8 +16,8 @@ const triangle = (a, b, c, pointsArray, planetInfo) => {
   const vertices = [a, b, c];
 
   const translateMatrix = translate(
-    planetInfo.distance + planetInfo.dx,
-    planetInfo.distance + planetInfo.dy,
+    (planetInfo.distance + planetInfo.radius) * planetInfo.dx,
+    (planetInfo.distance + planetInfo.radius) * planetInfo.dy,
     0
   );
   const scaleMatrix = scalem(

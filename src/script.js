@@ -3,8 +3,8 @@ let pointsArray = [];
 let time = 0;
 let dtime = 0.04;
 
-let far = 1000;
-let near = 50;
+let far = 100;
+let near = 1;
 
 let vBuffer;
 
@@ -36,9 +36,9 @@ window.onload = function main() {
   modelViewMatrixLoc = gl.getUniformLocation(program, "u_modelViewMatrix");
   projectionMatrixLoc = gl.getUniformLocation(program, "u_projectionMatrix");
 
-  eye = vec3(near, near, near);
+  eye = vec3(0, 30, 30);
   V = lookAt(eye, at, up);
-  P = perspective(45, 1, near, far);
+  P = perspective(-90, 1, near, far);
   gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(V));
   gl.uniformMatrix4fv(projectionMatrixLoc, false, flatten(P));
 
@@ -50,16 +50,14 @@ const renderScene = () => {
 
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-  //Insert logic for calculating the position of a planet after time chunk 'time'
+  let dx = Math.cos(time);
+  let dy = Math.sin(time);
 
-  let dx = 1.0;
-  let dy = 1.0;
-
-  let sun = generateCelestialBody(3.0, 0.0, 0.0, 0.0); // sun is still so we dont need a position change with time
-
+  let sun = generateCelestialBody(5.0, 0.0, 0.0, 0.0); // sun is still so we dont need a position change with time
   let planet = generateCelestialBody(1.0, 8.0, dx, dy); // this is a test planet to make sure the orbital logic is correct
+  let planet2 = generateCelestialBody(2.0, 20.0, dx, dy); // this is a test planet to make sure the orbital logic is correct
 
-  pointsArray = [...sun, ...planet]; // add all bodies to the array
+  pointsArray = [...sun, ...planet, ...planet2]; // add all bodies to the array
 
   gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);
   gl.bufferData(gl.ARRAY_BUFFER, flatten(pointsArray), gl.STATIC_DRAW);

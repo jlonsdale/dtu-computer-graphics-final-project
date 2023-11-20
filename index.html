@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <script type="text/javascript" src="../common/webgl-utils.js"></script>
-    <script type="text/javascript" src="../common/initShaders.js"></script>
-    <script type="text/javascript" src="../common/MV.js"></script>
-    <script type="text/javascript" src="script.js"></script>
-    <script type="text/javascript" src="constants.js"></script>
+    <script type="text/javascript" src="./common/webgl-utils.js"></script>
+    <script type="text/javascript" src="./common/initShaders.js"></script>
+    <script type="text/javascript" src="./common/MV.js"></script>
+    <script type="text/javascript" src="./src/script.js"></script>
+    <script type="text/javascript" src="./src/constants.js"></script>
 
     <script id="vertex-shader" type="x-shader/x-vertex">
       attribute vec4 a_Position;
@@ -37,25 +37,26 @@
     </script>
 
     <style>
-      .shape-button {
-        margin: 4px;
-      }
-
-      .slider-container {
-        margin: 10px 0;
+      #container {
         display: flex;
+        justify-content: center;
         align-items: center;
+        margin: auto;
+        background-color: black;
       }
 
-      .slider-label {
-        width: 120px;
-        margin-right: 10px;
-        text-align: right;
+      body {
+        color: white;
+        background-color: black;
       }
     </style>
   </head>
-
   <body>
-    <canvas id="c" height="712" width="712"> ruh roh </canvas>
+    <div id="container">
+      <h2>Space Simulation in webGL</h2>
+    </div>
+    <div id="container">
+      <canvas id="c" height="800" width="800">Canvas not supported</canvas>
+    </div>
   </body>
 </html>
