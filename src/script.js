@@ -1,6 +1,6 @@
 let canvas;
 let gl;
-let numTimesToSubdivide = 5;
+let numTimesToSubdivide;
 let pointsArray = [];
 let normalsArray = [];
 
@@ -63,6 +63,10 @@ function tetrahedron(a, b, c, d, n) {
 }
 
 window.onload = function main() {
+  if (!numTimesToSubdivide) {
+    numTimesToSubdivide = 5;
+  }
+
   gl = initWebGL("c");
   gl.clearColor(0.3921, 0.5843, 0.9294, 1.0);
   gl.enable(gl.DEPTH_TEST);
@@ -92,8 +96,6 @@ window.onload = function main() {
 
   modelViewMatrixLoc = gl.getUniformLocation(program, "u_modelViewMatrix");
   projectionMatrixLoc = gl.getUniformLocation(program, "u_projectionMatrix");
-
-  console.log(ka, ks, kd, s);
 
   renderScene();
 };
