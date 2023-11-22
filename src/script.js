@@ -21,8 +21,8 @@ let up = vec3(0.0, 1.0, 0.0);
 let animationRequestId;
 
 let kscol = vec4(1.0, 1.0, 1.0, 1.0);
-let kdcol = vec4(1.0, 0.0, 0.0, 1.0);
-let kacol = vec4(0.0, 0.0, 1.0, 1.0);
+let kdcol = vec4(0.8, 0.8, 0.8, 1.0);
+let kacol = vec4(0.7, 0.5, 0.2, 1.0);
 
 let ka_val = 0.5;
 let ks_val = 1;
@@ -79,15 +79,15 @@ window.onload = function main() {
   modelViewMatrixLoc = gl.getUniformLocation(program, "u_modelViewMatrix");
   projectionMatrixLoc = gl.getUniformLocation(program, "u_projectionMatrix");
 
-  // gl.uniform4fv(gl.getUniformLocation(program, "ksColor"), flatten(kscol));
-  // gl.uniform4fv(gl.getUniformLocation(program, "kaColor"), flatten(kacol));
-  // gl.uniform4fv(gl.getUniformLocation(program, "kdColor"), flatten(kdcol));
+  gl.uniform4fv(gl.getUniformLocation(program, "ksColor"), flatten(kscol));
+  gl.uniform4fv(gl.getUniformLocation(program, "kaColor"), flatten(kacol));
+  gl.uniform4fv(gl.getUniformLocation(program, "kdColor"), flatten(kdcol));
 
-  // gl.uniform1f(gl.getUniformLocation(program, "kd"), kd_val);
-  // gl.uniform1f(gl.getUniformLocation(program, "ks"), ka_val);
-  // gl.uniform1f(gl.getUniformLocation(program, "ks"), ks_val);
-  // gl.uniform1f(gl.getUniformLocation(program, "li"), li_val);
-  // gl.uniform1f(gl.getUniformLocation(program, "shine"), shininess);
+  gl.uniform1f(gl.getUniformLocation(program, "kd"), kd_val);
+  gl.uniform1f(gl.getUniformLocation(program, "ks"), ka_val);
+  gl.uniform1f(gl.getUniformLocation(program, "ks"), ks_val);
+  gl.uniform1f(gl.getUniformLocation(program, "li"), li_val);
+  gl.uniform1f(gl.getUniformLocation(program, "shine"), shininess);
 
   renderScene();
 };
@@ -142,11 +142,9 @@ const renderScene = async () => {
   gl.bindBuffer(gl.ARRAY_BUFFER, nBuffer);
   gl.bufferData(gl.ARRAY_BUFFER, flatten(normalsArray), gl.STATIC_DRAW);
 
-  console.log(normalsArray.length, pointsArray.length);
 
   for (let i = 0; i < pointsArray.length; i += 3) {
     gl.drawArrays(gl.TRIANGLES, i, 3);
   }
-  console.log(normalsArray[0], pointsArray[0]);
   animationRequestId = requestAnimationFrame(renderScene);
 };
