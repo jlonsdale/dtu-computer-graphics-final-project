@@ -24,7 +24,7 @@ const initWebGL = (canvasId) => {
   return gl;
 };
 
-const triangle = (a, b, c, pointsArray, planetInfo, colorArray) => {
+const triangle = (a, b, c, pointsArray, normalsArray, planetInfo, colorArray) => {
   const vertices = [a, b, c];
 
   const translateMatrix = translate(
@@ -41,6 +41,7 @@ const triangle = (a, b, c, pointsArray, planetInfo, colorArray) => {
   vertices.forEach((v) => {
     const r = mult(translateMatrix, mult(scaleMatrix, vec4([...v])));
     pointsArray.push(r);
+    normalsArray.push(vec4(a,b,c,0.0));
     colorArray.push(planetInfo.color);
   });
 };
@@ -51,6 +52,7 @@ const divideTriangle = (
   c,
   count,
   pointsArray,
+  normalsArray,
   planetInfo,
   colorArray
 ) => {
@@ -63,21 +65,21 @@ const divideTriangle = (
     ac = normalize(ac, true);
     bc = normalize(bc, true);
 
-    divideTriangle(a, ab, ac, count - 1, pointsArray, planetInfo, colorArray);
-    divideTriangle(ab, b, bc, count - 1, pointsArray, planetInfo, colorArray);
-    divideTriangle(bc, c, ac, count - 1, pointsArray, planetInfo, colorArray);
-    divideTriangle(ab, bc, ac, count - 1, pointsArray, planetInfo, colorArray);
+    divideTriangle(a, ab, ac, count - 1, pointsArray, normalsArray, planetInfo, colorArray);
+    divideTriangle(ab, b, bc, count - 1, pointsArray, normalsArray, planetInfo, colorArray);
+    divideTriangle(bc, c, ac, count - 1, pointsArray, normalsArray, planetInfo, colorArray);
+    divideTriangle(ab, bc, ac, count - 1, pointsArray, normalsArray, planetInfo, colorArray);
   } else {
-    triangle(a, b, c, pointsArray, planetInfo, colorArray);
+    triangle(a, b, c, pointsArray, normalsArray, planetInfo, colorArray);
   }
 };
 
-const tetrahedron = (a, b, c, d, pointsArray, planetInfo, colorArray) => {
+const tetrahedron = (a, b, c, d, pointsArray, normalsArray, planetInfo, colorArray) => {
   const n = 3;
-  divideTriangle(a, b, c, n, pointsArray, planetInfo, colorArray);
-  divideTriangle(d, c, b, n, pointsArray, planetInfo, colorArray);
-  divideTriangle(a, d, b, n, pointsArray, planetInfo, colorArray);
-  divideTriangle(a, c, d, n, pointsArray, planetInfo, colorArray);
+  divideTriangle(a, b, c, n, pointsArray, normalsArray, planetInfo, colorArray);
+  divideTriangle(d, c, b, n, pointsArray, normalsArray, planetInfo, colorArray);
+  divideTriangle(a, d, b, n, pointsArray, normalsArray, planetInfo, colorArray);
+  divideTriangle(a, c, d, n, pointsArray, normalsArray, planetInfo, colorArray);
 };
 
 // r - radius.
@@ -87,6 +89,7 @@ const tetrahedron = (a, b, c, d, pointsArray, planetInfo, colorArray) => {
 
 const generateCelestialBody = (r, d, dx, dy, planet) => {
   let pointsArray = [];
+  let normalsArray = [];
   let colorArray = [];
 
   const planetInfo = {
@@ -97,6 +100,6 @@ const generateCelestialBody = (r, d, dx, dy, planet) => {
     color: planetColors[planet],
   };
 
-  tetrahedron(va, vb, vc, vd, pointsArray, planetInfo, colorArray);
-  return { pointsArray, colorArray };
+  tetrahedron(va, vb, vc, vd, pointsArray, normalsArray, planetInfo, colorArray);
+  return { pointsArray, normalsArray, colorArray };
 };
