@@ -9,9 +9,10 @@ by big O and wdj
 relaive sizes and relative distances
 
 - [ ] task 4 - add textures
-- [ ] task 5 - add lighting from the sun
+- [x] task 5 - add lighting from the sun
 - [ ] task 6 - allow user to pitch and move the camera and zoom
-
+- [ ] task 7 - add the rings to saturn.
+      
 ## here i will just put notes for when writing the report
 
 - starting with week 5 worksheet for rendering a sphere
