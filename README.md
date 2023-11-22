@@ -13,6 +13,7 @@ relaive sizes and relative distances
 - [ ] task 6 - allow user to pitch and move the camera and zoom
 - [ ] task 7 - add skybox.
 - [ ] task 8 - add the rings to saturn.
+- [ ] task 9 - add celestial body dependent material colour
       
 ## here i will just put notes for when writing the report
 
