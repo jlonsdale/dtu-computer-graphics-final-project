@@ -15,6 +15,46 @@ const planetColors = {
   Sun: vec4(1.0, 0.9, 0.0, 1.0), // Yellow (for the Sun)
 };
 
+const planetaryDistances = {
+  Sun: 0.0,
+  Mercury: 0.39,
+  Venus: 0.72,
+  Earth: 1.0,
+  Mars: 1.52,
+  Jupiter: 5.2,
+  Saturn: 9.5,
+  Uranus: 19.1,
+  Neptune: 30.1,
+};
+
+const relativeRadii = {
+  Sun: 20.2, // Approximate relative radius of the Sun compared to Earth.
+  Mercury: 0.38,
+  Venus: 0.95,
+  Earth: 1.0,
+  Mars: 0.53,
+  Jupiter: 11.2,
+  Saturn: 9.45,
+  Uranus: 4.0,
+  Neptune: 3.88,
+};
+
+const calculateCumulativeSum = () => {
+  const cumulativeSum = {};
+  let sum = 0;
+  //deconstruct object 2 ovid stupid mutable objects javascript fucker
+  const radiiCopy = { ...relativeRadii };
+  const planets = Object.keys(radiiCopy);
+
+  for (let i = 0; i < planets.length; i++) {
+    const planet = planets[i];
+    sum += radiiCopy[planet];
+    radiiCopy[planet] = sum;
+  }
+
+  return radiiCopy;
+};
+
 const initWebGL = (canvasId) => {
   const canvas = document.getElementById(canvasId);
   const gl = WebGLUtils.setupWebGL(canvas);
