@@ -3,7 +3,7 @@
 by big O and wdj
 
 - [x] task 1 - render 2 spheres, 1 orbiting the other
-
+- [ ] task 1.5 - fix the formatting of the readme!
 - [] task 2 - extend number of spheres to 7 or some shit who knows how many planets there are
 
 relaive sizes and relative distances
