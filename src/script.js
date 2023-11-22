@@ -2,9 +2,9 @@ let pointsArray = [];
 let colorArray = [];
 
 let time = 0;
-let dtime = 0.04;
+let dtime = 0.01;
 
-let far = 100;
+let far = 500;
 let near = 1;
 
 let vBuffer;
@@ -31,6 +31,7 @@ let shininess = 100.0;
 
 let scrollValue = 10;
 const minscrollValue = 10;
+
 const maxscrollValue = 1000;
 
 const handleScroll = (event) => {
@@ -76,6 +77,7 @@ window.onload = function main() {
 
   modelViewMatrixLoc = gl.getUniformLocation(program, "u_modelViewMatrix");
   projectionMatrixLoc = gl.getUniformLocation(program, "u_projectionMatrix");
+
  
   
   gl.uniform4fv(gl.getUniformLocation(program, "ksColor"),flatten(kscol));
@@ -88,66 +90,46 @@ window.onload = function main() {
   gl.uniform1f(gl.getUniformLocation(program, "li"),li_val);
   gl.uniform1f(gl.getUniformLocation(program, "shine"), shininess);
 
+
   renderScene();
 };
 
-const renderScene = () => {
+const renderScene = async () => {
   time += dtime; //increment a unit of time
 
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-  eye = vec3(0, scrollValue, 30);
+  eye = vec3(0, scrollValue, 15);
   V = lookAt(eye, at, up);
-  P = perspective(-90, 1, near, scrollValue + far);
+
+  P = perspective(-100, 1, near, scrollValue + far);
   gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(V));
   gl.uniformMatrix4fv(projectionMatrixLoc, false, flatten(P));
 
   let dx = Math.cos(time);
   let dy = Math.sin(time);
 
-  let { pointsArray: sun, normalsArray: sun,  colorArray: sunColor } = generateCelestialBody(
-    5.0,
-    0.0,
-    0.0,
-    0.0,
-    "Sun"
-  );
-  let { pointsArray: mercury, normalsArray: mercury, colorArray: mercuryColor } =
-    generateCelestialBody(1.0, 8.0, dx, dy, "Mercury");
 
-  let { pointsArray: venus, normalsArray: venus,  colorArray: venusColor } = generateCelestialBody(
-    2.0,
-    20.0,
-    dx,
-    dy,
-    "Venus"
-  );
+  pointsArray = [];
+  colorArray = [];
 
-  let { pointsArray: earth, normalsArray: earth, colorArray: earthColor } = generateCelestialBody(
-    4.0,
-    40.0,
-    dx,
-    dy,
-    "Earth"
-  );
+  const csumRadii = calculateCumulativeSum();
 
-  let { pointsArray: mars, normalsArray: mars, colorArray: marsColor } = generateCelestialBody(
-    4.0,
-    70.0,
-    dx,
-    dy,
-    "Mars"
-  );
+  for (const planet in planetaryDistances) {
+    const distance = planetaryDistances[planet];
+    const radius = relativeRadii[planet];
+    let { pointsArray: points, colorArray: colors } = generateCelestialBody(
+      radius,
+      distance == 0 ? 0 : 50 + distance * 10,
+      distance == 0 ? 0 : dx,
+      distance == 0 ? 0 : dy,
+      planet
+    );
 
-  pointsArray = [...sun, ...mercury, ...venus, ...earth, ...mars]; // add all bodies to the array
-  normalsArray = [...sun, ...mercury, ...venus, ...earth, ...mars]; // add all bodies to normal array
-  colorArray = [
-    ...sunColor,
-    ...mercuryColor,
-    ...venusColor,
-    ...earthColor,
-    ...marsColor,
-  ]; // add all bodies to the array
+    pointsArray = [...points, ...pointsArray];
+    colorArray = [...colors, ...colorArray];
+  }
+
 
   gl.bindBuffer(gl.ARRAY_BUFFER, cBuffer);
   gl.bufferData(gl.ARRAY_BUFFER, flatten(colorArray), gl.STATIC_DRAW);
