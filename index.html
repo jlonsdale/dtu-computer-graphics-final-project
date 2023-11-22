@@ -20,6 +20,7 @@
       varying vec3 N;
       varying vec3 L;
       varying vec3 E;
+      varying float v_attenuation;
 
       void main() {
 
@@ -30,7 +31,8 @@
         N = a_Normal.xyz;
         L = - a_Position.xyz;
         E = a_Position.xyz;
-
+        
+        v_attenuation = 1.0/pow(length(a_Position.xyz),2.0);
       }
     </script>
 
@@ -41,6 +43,7 @@
       varying vec3 N;
       varying vec3 L;
       varying vec3 E;
+      varying float v_attenuation;
 
       uniform vec4 ksColor;
       uniform vec4 kdColor;
@@ -62,9 +65,11 @@
         vec4 Lrs;
         vec4 Lra = ka*Li*kaColor;
         vec4 Lrd = vec4((kd*dot(LL,NN)*kdColor).xyz,1.0);
+        
+        float intensity = Li*v_attenuation;
 
         if (dot(LL, NN) < 0.0) Lrs = vec4(0.0, 0.0, 0.0, 1.0);
-        else Lrs = ksColor*max(ks*Li*pow(max(dot(NN,H),0.0),shininess),0.0);
+        else Lrs = ksColor*max(ks*intensity*pow(max(dot(NN,H),0.0),shininess),0.0);
 
         gl_FragColor = v_Color + vec4(Lrs.xyz,0.0) + Lra + Lrd;
       }
