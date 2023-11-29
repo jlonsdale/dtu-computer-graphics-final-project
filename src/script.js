@@ -11,7 +11,6 @@ let vBuffer;
 let nBuffer;
 let iBuffer;
 
-
 let V, P, N;
 let modelViewMatrixLoc, projectionMatrixLoc;
 
@@ -33,8 +32,8 @@ const maxscrollValue = 1000;
 
 let texture_images = [];
 let textures = [];
+let program;
 
-let source_list = ["../common/2k_sun.jpg", "../common/2k_earth_daymap.jpg"];
 
 const handleScroll = (event) => {
   scrollValue = Math.max(
@@ -44,38 +43,45 @@ const handleScroll = (event) => {
   console.log("Current scrollValue:", scrollValue);
 };
 
-function loadImages(source_list) {
+let source_list = [
+   "../common/2k_mercury.jpg",
+   "../common/2k_venus_surface.jpg",
+  "../common/2k_earth_daymap.jpg",
+  "../common/2k_mars.jpg",
+  "../common/2k_jupiter.jpg",
+  "../common/2k_saturn.jpg",
+  "../common/2k_uranus.jpg",
+  "../common/2k_uranus.jpg",
+   "../common/2k_sun.jpg"
+];
 
-  for (i=0; i < source_list.length; i++){
-      console.log(source_list[i])
-      let image = document.createElement("img");
-      image.src = source_list[i];
-      image.onload = () => {
-      // Uploading textures.
-        let texture = gl.createTexture();
+const loadImages = async (source_list) => {
+  for (i = 0; i < source_list.length; i++) {
+    let image = document.createElement("img");
+    image.src = source_list[i];
+    image.onload = async () => {
+      let texture = gl.createTexture();
+      await gl.bindTexture(gl.TEXTURE_2D, texture);
 
-        gl.bindTexture(gl.TEXTURE_2D, texture);
+      await gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
+      await gl.texImage2D(
+        gl.TEXTURE_2D,
+        0,
+        gl.RGBA,
+        gl.RGBA,
+        gl.UNSIGNED_BYTE,
+        image
+      );
+      await gl.generateMipmap(gl.TEXTURE_2D);
 
-        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
-        gl.texImage2D(
-          gl.TEXTURE_2D,
-          0,
-          gl.RGBA,
-          gl.RGBA,
-          gl.UNSIGNED_BYTE,
-          image
-        );
-        gl.generateMipmap(gl.TEXTURE_2D);
+      await gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+      await gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+      await gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
+      await gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
 
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
-
-        textures.push(texture)
-    }
+      textures.push(texture);
+    };
   }
-
 };
 
 window.addEventListener("wheel", handleScroll);
@@ -85,7 +91,7 @@ window.onload = main = async () => {
   gl.clearColor(0.1, 0.0, 0.36, 1.0);
   gl.enable(gl.DEPTH_TEST);
 
-  let program = initShaders(gl, "vertex-shader", "fragment-shader");
+  program = initShaders(gl, "vertex-shader", "fragment-shader");
   gl.useProgram(program);
 
   vBuffer = gl.createBuffer();
@@ -102,14 +108,6 @@ window.onload = main = async () => {
   gl.vertexAttribPointer(vNormal, 4, gl.FLOAT, false, 0, 0);
   gl.enableVertexAttribArray(vNormal);
 
-  iBuffer = gl.createBuffer();
-  gl.bindBuffer(gl.ARRAY_BUFFER, iBuffer);
-
-  let vInfo = gl.getAttribLocation(program, "a_Info");
-  gl.vertexAttribPointer(vInfo, 1, gl.FLOAT, false, 0, 0);
-  gl.enableVertexAttribArray(vInfo);
-
-
   gl.cullFace(gl.BACK);
 
   modelViewMatrixLoc = gl.getUniformLocation(program, "u_modelViewMatrix");
@@ -123,13 +121,6 @@ window.onload = main = async () => {
 
   // get textures
   await loadImages(source_list);
-
-  gl.uniform1i(gl.getUniformLocation(program, "sun_texture"),0)
-  gl.bindTexture(gl.TEXTURE_2D, textures[0]);
-  gl.uniform1i(gl.getUniformLocation(program, "earth_texture"),1)
-  gl.bindTexture(gl.TEXTURE_2D, textures[1]);
-
-
 
   renderScene();
 };
@@ -145,6 +136,9 @@ const renderScene = async () => {
   P = perspective(-100, 1, near, scrollValue + far);
   gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(V));
   gl.uniformMatrix4fv(projectionMatrixLoc, false, flatten(P));
+
+  if (textures.length >= 2) {
+  }
 
   let dx = Math.cos(time);
   let dy = Math.sin(time);
@@ -181,12 +175,20 @@ const renderScene = async () => {
   gl.bindBuffer(gl.ARRAY_BUFFER, nBuffer);
   gl.bufferData(gl.ARRAY_BUFFER, flatten(normalsArray), gl.STATIC_DRAW);
 
-  gl.bindBuffer(gl.ARRAY_BUFFER, iBuffer);
-  gl.bufferData(gl.ARRAY_BUFFER, flatten(typeArray), gl.STATIC_DRAW);
+  let number_of_planets = 9;
 
-  for (let i = 0; i < pointsArray.length; i += 3) {
-    gl.drawArrays(gl.TRIANGLES, i, 3);
+  let vertices_pr_planet = pointsArray.length/9;
+  
+  for (let i = 0; i < number_of_planets; i += 1){
+    gl.bindTexture(gl.TEXTURE_2D, textures[i]);
+    gl.uniform1i(gl.getUniformLocation(program, "texture"), 0);
+    
+    for (let j = 0; j < vertices_pr_planet; j += 3) {
+      gl.drawArrays(gl.TRIANGLES, j + vertices_pr_planet*i, 3); 
+    }
 
   }
+
+
   animationRequestId = requestAnimationFrame(renderScene);
 };

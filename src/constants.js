@@ -4,15 +4,15 @@ const vc = vec4(-0.816497, -0.471405, 0.333333);
 const vd = vec4(0.816497, -0.471405, 0.333333);
 
 const planetType = {
-  Mercury: 1, // Gray
-  Venus: 2, // Orange
-  Earth: 3, // Blue
-  Mars: 4, // Red
-  Jupiter: 5, // Orange
-  Saturn: 6, // Yellow
-  Uranus: 7, // Light Blue
-  Neptune: 8, // Dark Blue
-  Sun: 0, // Yellow (for the Sun)
+  Mercury: 0, // Gray
+  Venus: 1, // Orange
+  Earth: 2, // Blue
+  Mars: 3, // Red
+  Jupiter: 4, // Orange
+  Saturn: 5, // Yellow
+  Uranus: 6, // Light Blue
+  Neptune: 7, // Dark Blue
+  Sun: 8, // Yellow (for the Sun)
 };
 
 const planetaryDistances = {
@@ -168,7 +168,7 @@ const tetrahedron = (
   planetInfo,
   typeArray
 ) => {
-  const n = 2;
+  const n = 3;
   divideTriangle(a, b, c, n, pointsArray, normalsArray, planetInfo, typeArray);
   divideTriangle(d, c, b, n, pointsArray, normalsArray, planetInfo, typeArray);
   divideTriangle(a, d, b, n, pointsArray, normalsArray, planetInfo, typeArray);

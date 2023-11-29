@@ -18,8 +18,7 @@
       
       varying vec2 fTexCoords;
 
-      uniform sampler2D sun_texture; 
-      uniform sampler2D earth_texture;
+      uniform sampler2D texture; 
 
       varying vec3 N;
       varying vec3 L;
@@ -56,8 +55,7 @@
       varying vec3 E;
       varying float v_attenuation;
 
-      uniform sampler2D sun_texture;
-      uniform sampler2D earth_texture;
+      uniform sampler2D texture;
       
       varying vec2 fTexCoords;
       
@@ -82,8 +80,7 @@
         if (dot(LL, NN) < 0.0) Lrs = vec4(0.0, 0.0, 0.0, 1.0);
         else Lrs = ksColor*max(ks*intensity*pow(max(dot(NN,H),0.0),shininess),0.0);
       
-        if (type - 0.1 <= 0.0) gl_FragColor = texture2D(sun_texture, fTexCoords);
-        else gl_FragColor = texture2D(earth_texture, fTexCoords)* Lrs;
+        gl_FragColor = texture2D(texture, fTexCoords) + Lrs;
 
   
       }
