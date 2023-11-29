@@ -148,11 +148,12 @@ const renderScene = async () => {
       distance == 0 ? 0 : 50 + distance * 10,
       distance == 0 ? 0 : dx,
       distance == 0 ? 0 : dy,
-      planet
+      planet,
+      planet == currentPlanet
     );
     if (planet == currentPlanet) {
-      minscrollValue = distance + radius * 4;
-      maxscrollValue = distance + radius * 10;
+      minscrollValue = distance + radius * 2;
+      maxscrollValue = distance + radius * 4;
 
       if (scrollValue < minscrollValue) {
         scrollValue = minscrollValue + 1;
