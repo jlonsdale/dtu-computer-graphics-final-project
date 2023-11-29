@@ -35,6 +35,9 @@ const minscrollValue = 100;
 
 const maxscrollValue = 1000;
 
+let sun_texture;
+
+
 const handleScroll = (event) => {
   scrollValue = Math.max(
     minscrollValue,
@@ -43,9 +46,29 @@ const handleScroll = (event) => {
   console.log("Current scrollValue:", scrollValue);
 };
 
+const initSunMap = async (gl,program) => {
+  // Uploading textures. 
+
+  const sun_image = await document.createElement("img");
+  sun_image.crossOrigin = "anonymous";
+  sun_image.src = "./common/2k_sun.jpg";
+
+  sun_texture = gl.createTexture();
+  await gl.bindTexture(gl.TEXTURE_2D, sun_texture);
+
+  gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, sun_image);
+  gl.generateMipmap(gl.TEXTURE_2D);
+
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+  gl.uniform1i(gl.getUniformLocation(program, "sun_texture"), 0);
+
+}
+
 window.addEventListener("wheel", handleScroll);
 
-window.onload = function main() {
+window.onload = main = async() => {
   gl = initWebGL("c");
   gl.clearColor(0.1, 0.0, 0.36, 1.0);
   gl.enable(gl.DEPTH_TEST);
@@ -89,8 +112,13 @@ window.onload = function main() {
   gl.uniform1f(gl.getUniformLocation(program, "li"), li_val);
   gl.uniform1f(gl.getUniformLocation(program, "shine"), shininess);
 
+  // get textures
+  initSunMap(gl,program);
+
   renderScene();
 };
+
+
 
 const renderScene = async () => {
   time += dtime; //increment a unit of time
@@ -141,7 +169,6 @@ const renderScene = async () => {
 
   gl.bindBuffer(gl.ARRAY_BUFFER, nBuffer);
   gl.bufferData(gl.ARRAY_BUFFER, flatten(normalsArray), gl.STATIC_DRAW);
-
 
   for (let i = 0; i < pointsArray.length; i += 3) {
     gl.drawArrays(gl.TRIANGLES, i, 3);
