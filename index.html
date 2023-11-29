@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <link rel="stylesheet" type="text/css" href="styles.css" />
+
     <script type="text/javascript" src="./common/webgl-utils.js"></script>
     <script type="text/javascript" src="./common/initShaders.js"></script>
     <script type="text/javascript" src="./common/MV.js"></script>
@@ -69,63 +71,6 @@
         gl_FragColor = v_Color + vec4(Lrs.xyz,0.0) + Lra + Lrd;
       }
     </script>
-
-    <style>
-      #container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        margin: auto;
-        background-color: black;
-      }
-
-      #Mercury {
-        background-color: rgba(178, 178, 178, 1);
-      }
-      #Venus {
-        background-color: rgba(255, 128, 0, 1);
-      }
-      #Earth {
-        background-color: rgba(0, 0, 255, 1);
-        color: white;
-      }
-      #Mars {
-        background-color: rgba(255, 0, 0, 1);
-        color: white;
-      }
-      #Jupiter {
-        background-color: rgba(255, 178, 76, 1);
-      }
-      #Saturn {
-        background-color: rgba(255, 255, 0, 1);
-      }
-      #Uranus {
-        background-color: rgba(153, 204, 255, 1);
-      }
-      #Neptune {
-        background-color: rgba(0, 0, 128, 1);
-        color: white;
-      }
-      #Sun {
-        background-color: rgba(255, 230, 0, 1);
-      }
-
-      body {
-        color: white;
-        background-color: black;
-      }
-
-      /* Style for planet buttons */
-      .button {
-        display: inline-block;
-        padding: 10px 20px;
-        margin: 10px;
-        cursor: pointer;
-        border: none;
-        border-radius: 5px;
-        font-size: 16px;
-      }
-    </style>
   </head>
   <body>
     <div id="container">
