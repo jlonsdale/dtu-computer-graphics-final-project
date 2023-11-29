@@ -26,7 +26,7 @@
         v_Color = a_Color;
 
         gl_Position = u_projectionMatrix * u_modelViewMatrix * a_Position;
-      
+
         N = a_Normal.xyz;
         L = - a_Position.xyz;
         E = a_Position.xyz;
@@ -79,15 +79,62 @@
         background-color: black;
       }
 
+      #Mercury {
+        background-color: rgba(178, 178, 178, 1);
+      }
+      #Venus {
+        background-color: rgba(255, 128, 0, 1);
+      }
+      #Earth {
+        background-color: rgba(0, 0, 255, 1);
+        color: white;
+      }
+      #Mars {
+        background-color: rgba(255, 0, 0, 1);
+        color: white;
+      }
+      #Jupiter {
+        background-color: rgba(255, 178, 76, 1);
+      }
+      #Saturn {
+        background-color: rgba(255, 255, 0, 1);
+      }
+      #Uranus {
+        background-color: rgba(153, 204, 255, 1);
+      }
+      #Neptune {
+        background-color: rgba(0, 0, 128, 1);
+        color: white;
+      }
+      #Sun {
+        background-color: rgba(255, 230, 0, 1);
+      }
+
       body {
         color: white;
         background-color: black;
+      }
+
+      /* Style for planet buttons */
+      .button {
+        display: inline-block;
+        padding: 10px 20px;
+        margin: 10px;
+        cursor: pointer;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
       }
     </style>
   </head>
   <body>
     <div id="container">
       <h2>🚀 Space Simulation in WebGL 🌌</h2>
+    </div>
+    <div id="container">
+      <div class="planet-buttons-container">
+        <button id="clear">Reset View</button>
+      </div>
     </div>
     <div id="container">
       <canvas id="c" height="800" width="800">Canvas not supported</canvas>

@@ -31,21 +31,38 @@ let li_val = 1.5;
 let shininess = 100.0;
 
 let scrollValue = 100;
-const minscrollValue = 100;
 
+const minscrollValue = 100;
 const maxscrollValue = 1000;
+
+let currentPlanet = null;
+
+const createPlanetButtons = async () => {
+  const planetButtonsDiv = document.querySelector(".planet-buttons-container");
+  const planets = Object.keys(planetColors);
+  for (const planet in planets) {
+    const button = await document.createElement("button");
+    button.textContent = planets[planet];
+    button.id = `${planets[planet]}`;
+    button.addEventListener("click", () => {
+      currentPlanet = planets[planet];
+    });
+    planetButtonsDiv.appendChild(button);
+  }
+};
 
 const handleScroll = (event) => {
   scrollValue = Math.max(
     minscrollValue,
     Math.min(maxscrollValue, scrollValue + (event.deltaY < 0 ? -1 : 1))
   );
-  console.log("Current scrollValue:", scrollValue);
 };
 
 window.addEventListener("wheel", handleScroll);
 
 window.onload = function main() {
+  createPlanetButtons();
+
   gl = initWebGL("c");
   gl.clearColor(0.1, 0.0, 0.36, 1.0);
   gl.enable(gl.DEPTH_TEST);
@@ -96,8 +113,15 @@ const renderScene = async () => {
   time += dtime; //increment a unit of time
 
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-
-  eye = vec3(0, scrollValue, 15);
+  if (!currentPlanet) {
+    eye = vec3(0, scrollValue, 15);
+  } else {
+    eye = vec3(
+      0,
+      relativeRadii[currentPlanet] + planetaryDistances[currentPlanet],
+      15
+    );
+  }
   V = lookAt(eye, at, up);
 
   P = perspective(-100, 1, near, scrollValue + far);
@@ -110,8 +134,6 @@ const renderScene = async () => {
   pointsArray = [];
   colorArray = [];
   normalsArray = [];
-
-  const csumRadii = calculateCumulativeSum();
 
   for (const planet in planetaryDistances) {
     const distance = planetaryDistances[planet];
@@ -141,7 +163,6 @@ const renderScene = async () => {
 
   gl.bindBuffer(gl.ARRAY_BUFFER, nBuffer);
   gl.bufferData(gl.ARRAY_BUFFER, flatten(normalsArray), gl.STATIC_DRAW);
-
 
   for (let i = 0; i < pointsArray.length; i += 3) {
     gl.drawArrays(gl.TRIANGLES, i, 3);
