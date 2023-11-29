@@ -59,7 +59,6 @@ const handleScroll = (event) => {
 };
 
 let source_list = [
-  "../common/2k_sun.jpg",
   "../common/2k_mercury.jpg",
   "../common/2k_venus_surface.jpg",
   "../common/2k_earth_daymap.jpg",
@@ -67,7 +66,7 @@ let source_list = [
   "../common/2k_jupiter.jpg",
   "../common/2k_saturn.jpg",
   "../common/2k_uranus.jpg",
-  "../common/2k_uranus.jpg",
+  "../common/2k_sun.jpg",
 ];
 
 const loadImages = async (source_list) => {
@@ -218,9 +217,9 @@ const renderScene = async () => {
   gl.bindBuffer(gl.ARRAY_BUFFER, nBuffer);
   gl.bufferData(gl.ARRAY_BUFFER, flatten(normalsArray), gl.STATIC_DRAW);
 
-  let number_of_planets = 9;
+  let number_of_planets = 8;
 
-  let vertices_pr_planet = pointsArray.length / 9;
+  let vertices_pr_planet = pointsArray.length / number_of_planets;
 
   for (let i = 0; i < number_of_planets; i += 1) {
     gl.bindTexture(gl.TEXTURE_2D, textures[i]);
