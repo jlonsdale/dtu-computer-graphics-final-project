@@ -26,9 +26,8 @@ let li_val = 1.5;
 let shininess = 100.0;
 
 let scrollValue = 100;
-const minscrollValue = 100;
-
-const maxscrollValue = 1000;
+let minscrollValue = 100;
+let maxscrollValue = 1000;
 
 let texture_images = [];
 let textures = [];
@@ -41,6 +40,7 @@ const createPlanetButtons = async () => {
   const planets = Object.keys(planetColors);
   planets.pop();
   for (const planet in planets) {
+    console.log(planet);
     const button = await document.createElement("button");
     button.textContent = planets[planet];
     button.id = `${planets[planet]}`;
@@ -59,6 +59,7 @@ const handleScroll = (event) => {
 };
 
 let source_list = [
+  "../common/2k_sun.jpg",
   "../common/2k_mercury.jpg",
   "../common/2k_venus_surface.jpg",
   "../common/2k_earth_daymap.jpg",
@@ -67,7 +68,6 @@ let source_list = [
   "../common/2k_saturn.jpg",
   "../common/2k_uranus.jpg",
   "../common/2k_uranus.jpg",
-  "../common/2k_sun.jpg",
 ];
 
 const loadImages = async (source_list) => {
@@ -102,6 +102,7 @@ const loadImages = async (source_list) => {
 window.addEventListener("wheel", handleScroll);
 
 window.onload = main = async () => {
+  console.log("here");
   createPlanetButtons();
 
   const clearButton = document.getElementById("clear");
@@ -116,7 +117,7 @@ window.onload = main = async () => {
   gl.clearColor(0.1, 0.0, 0.36, 1.0);
   gl.enable(gl.DEPTH_TEST);
 
-  let program = initShaders(gl, "vertex-shader", "fragment-shader");
+  program = initShaders(gl, "vertex-shader", "fragment-shader");
   gl.useProgram(program);
 
   vBuffer = gl.createBuffer();
@@ -143,6 +144,9 @@ window.onload = main = async () => {
   gl.uniform1f(gl.getUniformLocation(program, "ks"), ks_val);
   gl.uniform1f(gl.getUniformLocation(program, "li"), li_val);
   gl.uniform1f(gl.getUniformLocation(program, "shine"), shininess);
+
+  // get textures
+  await loadImages(source_list);
 
   renderScene();
 };
@@ -228,43 +232,4 @@ const renderScene = async () => {
   }
 
   animationRequestId = requestAnimationFrame(renderScene);
-};
-
-window.onload = main = async () => {
-  gl = initWebGL("c");
-  gl.clearColor(0.1, 0.0, 0.36, 1.0);
-  gl.enable(gl.DEPTH_TEST);
-
-  program = initShaders(gl, "vertex-shader", "fragment-shader");
-  gl.useProgram(program);
-
-  vBuffer = gl.createBuffer();
-  gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);
-
-  let vPosition = gl.getAttribLocation(program, "a_Position");
-  gl.vertexAttribPointer(vPosition, 4, gl.FLOAT, false, 0, 0);
-  gl.enableVertexAttribArray(vPosition);
-
-  nBuffer = gl.createBuffer();
-  gl.bindBuffer(gl.ARRAY_BUFFER, nBuffer);
-
-  let vNormal = gl.getAttribLocation(program, "a_Normal");
-  gl.vertexAttribPointer(vNormal, 4, gl.FLOAT, false, 0, 0);
-  gl.enableVertexAttribArray(vNormal);
-
-  gl.cullFace(gl.BACK);
-
-  modelViewMatrixLoc = gl.getUniformLocation(program, "u_modelViewMatrix");
-  projectionMatrixLoc = gl.getUniformLocation(program, "u_projectionMatrix");
-
-  gl.uniform4fv(gl.getUniformLocation(program, "ksColor"), flatten(kscol));
-
-  gl.uniform1f(gl.getUniformLocation(program, "ks"), ks_val);
-  gl.uniform1f(gl.getUniformLocation(program, "li"), li_val);
-  gl.uniform1f(gl.getUniformLocation(program, "shine"), shininess);
-
-  // get textures
-  await loadImages(source_list);
-
-  renderScene();
 };
