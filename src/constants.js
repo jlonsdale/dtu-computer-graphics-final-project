@@ -3,16 +3,16 @@ const vb = vec4(0.0, 0.942809, 0.333333);
 const vc = vec4(-0.816497, -0.471405, 0.333333);
 const vd = vec4(0.816497, -0.471405, 0.333333);
 
-const planetColors = {
-  Mercury: vec4(0.7, 0.7, 0.7, 1.0), // Gray
-  Venus: vec4(1.0, 0.5, 0.0, 1.0), // Orange
-  Earth: vec4(0.0, 0.0, 1.0, 1.0), // Blue
-  Mars: vec4(1.0, 0.0, 0.0, 1.0), // Red
-  Jupiter: vec4(1.0, 0.7, 0.3, 1.0), // Orange
-  Saturn: vec4(1.0, 1.0, 0.0, 1.0), // Yellow
-  Uranus: vec4(0.6, 0.8, 1.0, 1.0), // Light Blue
-  Neptune: vec4(0.0, 0.0, 0.5, 1.0), // Dark Blue
-  Sun: vec4(1.0, 0.9, 0.0, 1.0), // Yellow (for the Sun)
+const planetType = {
+  Mercury: 1, // Gray
+  Venus: 2, // Orange
+  Earth: 3, // Blue
+  Mars: 4, // Red
+  Jupiter: 5, // Orange
+  Saturn: 6, // Yellow
+  Uranus: 7, // Light Blue
+  Neptune: 8, // Dark Blue
+  Sun: 0, // Yellow (for the Sun)
 };
 
 const planetaryDistances = {
@@ -71,7 +71,7 @@ const triangle = (
   pointsArray,
   normalsArray,
   planetInfo,
-  colorArray
+  typeArray
 ) => {
   const vertices = [a, b, c];
 
@@ -90,7 +90,7 @@ const triangle = (
     const r = mult(translateMatrix, mult(scaleMatrix, vec4([...v])));
     pointsArray.push(r);
     normalsArray.push(vec4(a, b, c, 1.0));
-    colorArray.push(planetInfo.color);
+    typeArray.push(planetInfo.type)
   });
 };
 
@@ -102,7 +102,7 @@ const divideTriangle = (
   pointsArray,
   normalsArray,
   planetInfo,
-  colorArray
+  typeArray
 ) => {
   if (count > 0) {
     let ab = mix(a, b, 0.5);
@@ -121,7 +121,7 @@ const divideTriangle = (
       pointsArray,
       normalsArray,
       planetInfo,
-      colorArray
+      typeArray
     );
     divideTriangle(
       ab,
@@ -131,7 +131,7 @@ const divideTriangle = (
       pointsArray,
       normalsArray,
       planetInfo,
-      colorArray
+      typeArray
     );
     divideTriangle(
       bc,
@@ -141,7 +141,7 @@ const divideTriangle = (
       pointsArray,
       normalsArray,
       planetInfo,
-      colorArray
+      typeArray
     );
     divideTriangle(
       ab,
@@ -151,10 +151,10 @@ const divideTriangle = (
       pointsArray,
       normalsArray,
       planetInfo,
-      colorArray
+      typeArray
     );
   } else {
-    triangle(a, b, c, pointsArray, normalsArray, planetInfo, colorArray);
+    triangle(a, b, c, pointsArray, normalsArray, planetInfo, typeArray);
   }
 };
 
@@ -166,13 +166,13 @@ const tetrahedron = (
   pointsArray,
   normalsArray,
   planetInfo,
-  colorArray
+  typeArray
 ) => {
-  const n = 3;
-  divideTriangle(a, b, c, n, pointsArray, normalsArray, planetInfo, colorArray);
-  divideTriangle(d, c, b, n, pointsArray, normalsArray, planetInfo, colorArray);
-  divideTriangle(a, d, b, n, pointsArray, normalsArray, planetInfo, colorArray);
-  divideTriangle(a, c, d, n, pointsArray, normalsArray, planetInfo, colorArray);
+  const n = 2;
+  divideTriangle(a, b, c, n, pointsArray, normalsArray, planetInfo, typeArray);
+  divideTriangle(d, c, b, n, pointsArray, normalsArray, planetInfo, typeArray);
+  divideTriangle(a, d, b, n, pointsArray, normalsArray, planetInfo, typeArray);
+  divideTriangle(a, c, d, n, pointsArray, normalsArray, planetInfo, typeArray);
 };
 
 // r - radius.
@@ -183,14 +183,14 @@ const tetrahedron = (
 const generateCelestialBody = (r, d, dx, dy, planet) => {
   let pointsArray = [];
   let normalsArray = [];
-  let colorArray = [];
+  let typeArray = [];
 
   const planetInfo = {
     radius: r,
     distance: d + r,
     dx: dx,
     dy: dy,
-    color: planetColors[planet],
+    type: planetType[planet],
   };
 
   tetrahedron(
@@ -201,7 +201,7 @@ const generateCelestialBody = (r, d, dx, dy, planet) => {
     pointsArray,
     normalsArray,
     planetInfo,
-    colorArray
+    typeArray
   );
-  return { pointsArray, normalsArray, colorArray };
+  return { pointsArray, normalsArray, typeArray };
 };
