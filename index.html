@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <link rel="stylesheet" type="text/css" href="styles.css" />
+
     <script type="text/javascript" src="./common/webgl-utils.js"></script>
     <script type="text/javascript" src="./common/initShaders.js"></script>
     <script type="text/javascript" src="./common/MV.js"></script>
@@ -26,7 +28,7 @@
         v_Color = a_Color;
 
         gl_Position = u_projectionMatrix * u_modelViewMatrix * a_Position;
-      
+
         N = a_Normal.xyz;
         L = - a_Position.xyz;
         E = a_Position.xyz;
@@ -69,25 +71,15 @@
         gl_FragColor = v_Color + vec4(Lrs.xyz,0.0) + Lra + Lrd;
       }
     </script>
-
-    <style>
-      #container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        margin: auto;
-        background-color: black;
-      }
-
-      body {
-        color: white;
-        background-color: black;
-      }
-    </style>
   </head>
   <body>
     <div id="container">
       <h2>🚀 Space Simulation in WebGL 🌌</h2>
+    </div>
+    <div id="container">
+      <div class="planet-buttons-container">
+        <button id="clear">Reset View</button>
+      </div>
     </div>
     <div id="container">
       <canvas id="c" height="800" width="800">Canvas not supported</canvas>

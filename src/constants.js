@@ -40,7 +40,6 @@ const relativeRadii = {
 };
 
 const calculateCumulativeSum = () => {
-  const cumulativeSum = {};
   let sum = 0;
   //deconstruct object 2 ovid stupid mutable objects javascript fucker
   const radiiCopy = { ...relativeRadii };
@@ -166,9 +165,12 @@ const tetrahedron = (
   pointsArray,
   normalsArray,
   planetInfo,
-  colorArray
+  colorArray,
+  highPerf
 ) => {
-  const n = 3;
+  const n = highPerf ? 4 : 3;
+
+  console.log(n);
   divideTriangle(a, b, c, n, pointsArray, normalsArray, planetInfo, colorArray);
   divideTriangle(d, c, b, n, pointsArray, normalsArray, planetInfo, colorArray);
   divideTriangle(a, d, b, n, pointsArray, normalsArray, planetInfo, colorArray);
@@ -180,7 +182,7 @@ const tetrahedron = (
 // dx - x-displacement in time theta
 // dy - y-displacement in time theta
 
-const generateCelestialBody = (r, d, dx, dy, planet) => {
+const generateCelestialBody = (r, d, dx, dy, planet, highPerf = false) => {
   let pointsArray = [];
   let normalsArray = [];
   let colorArray = [];
@@ -201,7 +203,8 @@ const generateCelestialBody = (r, d, dx, dy, planet) => {
     pointsArray,
     normalsArray,
     planetInfo,
-    colorArray
+    colorArray,
+    highPerf
   );
   return { pointsArray, normalsArray, colorArray };
 };
