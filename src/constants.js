@@ -40,7 +40,6 @@ const relativeRadii = {
 };
 
 const calculateCumulativeSum = () => {
-  const cumulativeSum = {};
   let sum = 0;
   //deconstruct object 2 ovid stupid mutable objects javascript fucker
   const radiiCopy = { ...relativeRadii };

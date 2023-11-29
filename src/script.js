@@ -31,8 +31,8 @@ let li_val = 1.5;
 let shininess = 100.0;
 
 let scrollValue = 100;
+let minscrollValue = 100;
 
-const minscrollValue = 100;
 const maxscrollValue = 1000;
 
 let currentPlanet = null;
@@ -40,6 +40,7 @@ let currentPlanet = null;
 const createPlanetButtons = async () => {
   const planetButtonsDiv = document.querySelector(".planet-buttons-container");
   const planets = Object.keys(planetColors);
+  planets.pop();
   for (const planet in planets) {
     const button = await document.createElement("button");
     button.textContent = planets[planet];
@@ -54,14 +55,21 @@ const createPlanetButtons = async () => {
 const handleScroll = (event) => {
   scrollValue = Math.max(
     minscrollValue,
-    Math.min(maxscrollValue, scrollValue + (event.deltaY < 0 ? -1 : 1))
+    Math.min(maxscrollValue, scrollValue + (event.deltaY < 0 ? -2 : 2))
   );
 };
 
 window.addEventListener("wheel", handleScroll);
 
-window.onload = function main() {
+window.onload = main = async () => {
   createPlanetButtons();
+
+  const clearButton = document.getElementById("clear");
+  clearButton.addEventListener("click", () => {
+    currentPlanet = null;
+    scrollValue = 100;
+    minscrollValue = 100;
+  });
 
   gl = initWebGL("c");
   gl.clearColor(0.1, 0.0, 0.36, 1.0);
@@ -110,26 +118,19 @@ window.onload = function main() {
 };
 
 const renderScene = async () => {
-  time += dtime; //increment a unit of time
-
-  gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-  if (!currentPlanet) {
-    eye = vec3(0, scrollValue, 15);
-  } else {
-    eye = vec3(
-      0,
-      relativeRadii[currentPlanet] + planetaryDistances[currentPlanet],
-      15
-    );
-  }
-  V = lookAt(eye, at, up);
-
-  P = perspective(-100, 1, near, scrollValue + far);
-  gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(V));
-  gl.uniformMatrix4fv(projectionMatrixLoc, false, flatten(P));
-
+  time += 0.01;
   let dx = Math.cos(time);
   let dy = Math.sin(time);
+
+  gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+  if (!currentPlanet) {
+    eye = vec3(0, scrollValue, 15);
+    at = vec3(0.0, 0.0, 0.0);
+    up = vec3(0.0, 1.0, 0.0);
+    V = lookAt(eye, at, up);
+    P = perspective(-100, 1, near, scrollValue + far);
+  }
 
   pointsArray = [];
   colorArray = [];
@@ -149,11 +150,27 @@ const renderScene = async () => {
       distance == 0 ? 0 : dy,
       planet
     );
-
+    if (planet == currentPlanet) {
+      minscrollValue = distance + radius * 4;
+      if (scrollValue < minscrollValue) {
+        scrollValue = minscrollValue + 1;
+      }
+      at = vec3(points[0][0], points[0][1], points[0][2]);
+      eye = vec3(
+        points[0][0] + 2 * radius,
+        points[0][1] + 2 * radius,
+        scrollValue
+      );
+      V = lookAt(eye, at, up);
+      P = perspective(100, 1, distance + near, distance + far + scrollValue);
+    }
     pointsArray = [...points, ...pointsArray];
     colorArray = [...colors, ...colorArray];
     normalsArray = [...normal, ...normalsArray];
   }
+
+  gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(V));
+  gl.uniformMatrix4fv(projectionMatrixLoc, false, flatten(P));
 
   gl.bindBuffer(gl.ARRAY_BUFFER, cBuffer);
   gl.bufferData(gl.ARRAY_BUFFER, flatten(colorArray), gl.STATIC_DRAW);
