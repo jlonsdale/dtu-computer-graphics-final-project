@@ -32,8 +32,7 @@ let shininess = 100.0;
 
 let scrollValue = 100;
 let minscrollValue = 100;
-
-const maxscrollValue = 1000;
+let maxscrollValue = 1000;
 
 let currentPlanet = null;
 
@@ -69,6 +68,7 @@ window.onload = main = async () => {
     currentPlanet = null;
     scrollValue = 100;
     minscrollValue = 100;
+    maxscrollValue = 1000;
   });
 
   gl = initWebGL("c");
@@ -152,7 +152,12 @@ const renderScene = async () => {
     );
     if (planet == currentPlanet) {
       minscrollValue = distance + radius * 4;
+      maxscrollValue = distance + radius * 10;
+
       if (scrollValue < minscrollValue) {
+        scrollValue = minscrollValue + 1;
+      }
+      if (scrollValue > maxscrollValue) {
         scrollValue = minscrollValue + 1;
       }
       at = vec3(points[0][0], points[0][1], points[0][2]);
