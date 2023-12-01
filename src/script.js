@@ -12,7 +12,7 @@ let nBuffer;
 let iBuffer;
 
 let V, P, N;
-let modelViewMatrixLoc, projectionMatrixLoc;
+let modelViewMatrixLoc, projectionMatrixLoc, textureLocation;
 
 let eye;
 let at = vec3(0.0, 0.0, 0.0);
@@ -29,26 +29,27 @@ let scrollValue = 100;
 let minscrollValue = 100;
 let maxscrollValue = 1000;
 
-let texture_images = [];
-let textures = [];
+let planetTextures = {};
+let planetVertexLength = {};
 let program;
 
 let currentPlanet = null;
 
 const createPlanetButtons = async () => {
   const planetButtonsDiv = document.querySelector(".planet-buttons-container");
-  const planets = Object.keys(planetColors);
+  let planets = [...PLANET_ORDER];
   planets.pop();
-  for (const planet in planets) {
-    console.log(planet);
-    const button = await document.createElement("button");
-    button.textContent = planets[planet];
-    button.id = `${planets[planet]}`;
-    button.addEventListener("click", () => {
-      currentPlanet = planets[planet];
-    });
-    planetButtonsDiv.appendChild(button);
-  }
+  planets.forEach((planet) => {
+    if (planet != "Sun") {
+      let button = document.createElement("button");
+      button.textContent = planet;
+      button.id = planet;
+      button.addEventListener("click", () => {
+        currentPlanet = planet;
+      });
+      planetButtonsDiv.appendChild(button);
+    }
+  });
 };
 
 const handleScroll = (event) => {
@@ -57,26 +58,16 @@ const handleScroll = (event) => {
     Math.min(maxscrollValue, scrollValue + (event.deltaY < 0 ? -2 : 2))
   );
 };
+window.addEventListener("wheel", handleScroll);
 
-let source_list = [
-  "../common/2k_mercury.jpg",
-  "../common/2k_venus_surface.jpg",
-  "../common/2k_earth_daymap.jpg",
-  "../common/2k_mars.jpg",
-  "../common/2k_jupiter.jpg",
-  "../common/2k_saturn.jpg",
-  "../common/2k_uranus.jpg",
-  "../common/2k_sun.jpg",
-];
-
-const loadImages = async (source_list) => {
-  for (i = 0; i < source_list.length; i++) {
+const loadImages = async () => {
+  let planets = [...PLANET_ORDER];
+  planets.forEach((planet) => {
     let image = document.createElement("img");
-    image.src = source_list[i];
+    image.src = planetImages[planet];
     image.onload = async () => {
       let texture = gl.createTexture();
       await gl.bindTexture(gl.TEXTURE_2D, texture);
-
       await gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
       await gl.texImage2D(
         gl.TEXTURE_2D,
@@ -87,21 +78,16 @@ const loadImages = async (source_list) => {
         image
       );
       await gl.generateMipmap(gl.TEXTURE_2D);
-
       await gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
       await gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
       await gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
       await gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
-
-      textures.push(texture);
+      planetTextures[planet] = texture;
     };
-  }
+  });
 };
 
-window.addEventListener("wheel", handleScroll);
-
 window.onload = main = async () => {
-  console.log("here");
   createPlanetButtons();
 
   const clearButton = document.getElementById("clear");
@@ -137,15 +123,14 @@ window.onload = main = async () => {
 
   modelViewMatrixLoc = gl.getUniformLocation(program, "u_modelViewMatrix");
   projectionMatrixLoc = gl.getUniformLocation(program, "u_projectionMatrix");
+  textureLocation = gl.getUniformLocation(program, "texture");
 
   gl.uniform4fv(gl.getUniformLocation(program, "ksColor"), flatten(kscol));
-
   gl.uniform1f(gl.getUniformLocation(program, "ks"), ks_val);
   gl.uniform1f(gl.getUniformLocation(program, "li"), li_val);
   gl.uniform1f(gl.getUniformLocation(program, "shine"), shininess);
 
-  // get textures
-  await loadImages(source_list);
+  await loadImages();
 
   renderScene();
 };
@@ -165,11 +150,11 @@ const renderScene = async () => {
     P = perspective(-100, 1, near, scrollValue + far);
   }
 
-  pointsArray = [];
-  typeArray = [];
-  normalsArray = [];
+  let planetPoints = {};
+  let planetNormals = {};
+  let planets = [...PLANET_ORDER];
 
-  for (const planet in planetaryDistances) {
+  planets.forEach((planet) => {
     const distance = planetaryDistances[planet];
     const radius = relativeRadii[planet];
     let {
@@ -203,32 +188,30 @@ const renderScene = async () => {
       V = lookAt(eye, at, up);
       P = perspective(100, 1, distance + near, distance + far + scrollValue);
     }
-    pointsArray = [...points, ...pointsArray];
-    typeArray = [...type, ...typeArray];
-    normalsArray = [...normal, ...normalsArray];
-  }
+    planetPoints[planet] = [...points];
+    planetNormals[planet] = [...normal];
+  });
 
   gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(V));
   gl.uniformMatrix4fv(projectionMatrixLoc, false, flatten(P));
 
-  gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);
-  gl.bufferData(gl.ARRAY_BUFFER, flatten(pointsArray), gl.STATIC_DRAW);
-
-  gl.bindBuffer(gl.ARRAY_BUFFER, nBuffer);
-  gl.bufferData(gl.ARRAY_BUFFER, flatten(normalsArray), gl.STATIC_DRAW);
-
-  let number_of_planets = 8;
-
-  let vertices_pr_planet = pointsArray.length / number_of_planets;
-
-  for (let i = 0; i < number_of_planets; i += 1) {
-    gl.bindTexture(gl.TEXTURE_2D, textures[i]);
-    gl.uniform1i(gl.getUniformLocation(program, "texture"), 0);
-
-    for (let j = 0; j < vertices_pr_planet; j += 3) {
-      gl.drawArrays(gl.TRIANGLES, j + vertices_pr_planet * i, 3);
-    }
-  }
+  planets.forEach((planetName) => {
+    gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);
+    gl.bufferData(
+      gl.ARRAY_BUFFER,
+      flatten(planetPoints[planetName]),
+      gl.STATIC_DRAW
+    );
+    gl.bindBuffer(gl.ARRAY_BUFFER, nBuffer);
+    gl.bufferData(
+      gl.ARRAY_BUFFER,
+      flatten(planetNormals[planetName]),
+      gl.STATIC_DRAW
+    );
+    gl.bindTexture(gl.TEXTURE_2D, planetTextures[planetName]);
+    gl.uniform1i(textureLocation, 0);
+    gl.drawArrays(gl.TRIANGLES, 0, planetPoints[planetName].length);
+  });
 
   animationRequestId = requestAnimationFrame(renderScene);
 };

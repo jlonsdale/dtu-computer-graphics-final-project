@@ -3,6 +3,30 @@ const vb = vec4(0.0, 0.942809, 0.333333);
 const vc = vec4(-0.816497, -0.471405, 0.333333);
 const vd = vec4(0.816497, -0.471405, 0.333333);
 
+const PLANET_ORDER = [
+  "Sun",
+  "Mercury",
+  "Venus",
+  "Earth",
+  "Mars",
+  "Jupiter",
+  "Saturn",
+  "Uranus",
+  "Neptune",
+];
+
+const planetImages = {
+  Sun: "../common/2k_sun.jpg",
+  Mercury: "../common/2k_mercury.jpg",
+  Venus: "../common/2k_venus_surface.jpg",
+  Earth: "../common/2k_earth_daymap.jpg",
+  Mars: "../common/2k_mars.jpg",
+  Jupiter: "../common/2k_jupiter.jpg",
+  Saturn: "../common/2k_saturn.jpg",
+  Uranus: "../common/2k_uranus.jpg",
+  Neptune: "../common/2k_uranus.jpg",
+};
+
 const planetType = {
   Mercury: 0, // Gray
   Venus: 1, // Orange
