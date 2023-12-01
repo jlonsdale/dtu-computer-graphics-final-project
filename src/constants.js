@@ -3,16 +3,28 @@ const vb = vec4(0.0, 0.942809, 0.333333);
 const vc = vec4(-0.816497, -0.471405, 0.333333);
 const vd = vec4(0.816497, -0.471405, 0.333333);
 
-const planetType = {
-  Mercury: 0, // Gray
-  Venus: 1, // Orange
-  Earth: 2, // Blue
-  Mars: 3, // Red
-  Jupiter: 4, // Orange
-  Saturn: 5, // Yellow
-  Uranus: 6, // Light Blue
-  Neptune: 7, // Dark Blue
-  Sun: 8, // Yellow (for the Sun)
+const PLANET_ORDER = [
+  "Sun",
+  "Mercury",
+  "Venus",
+  "Earth",
+  "Mars",
+  "Jupiter",
+  "Saturn",
+  "Uranus",
+  "Neptune",
+];
+
+const planetImages = {
+  Sun: "../common/2k_sun.jpg",
+  Mercury: "../common/2k_mercury.jpg",
+  Venus: "../common/2k_venus_surface.jpg",
+  Earth: "../common/2k_earth_daymap.jpg",
+  Mars: "../common/2k_mars.jpg",
+  Jupiter: "../common/2k_jupiter.jpg",
+  Saturn: "../common/2k_saturn.jpg",
+  Uranus: "../common/2k_uranus.jpg",
+  Neptune: "../common/2k_uranus.jpg",
 };
 
 const planetColors = {
@@ -75,15 +87,7 @@ const initWebGL = (canvasId) => {
   return gl;
 };
 
-const triangle = (
-  a,
-  b,
-  c,
-  pointsArray,
-  normalsArray,
-  planetInfo,
-  typeArray
-) => {
+const triangle = (a, b, c, pointsArray, normalsArray, planetInfo) => {
   const vertices = [a, b, c];
 
   const translateMatrix = translate(
@@ -101,7 +105,6 @@ const triangle = (
     const r = mult(translateMatrix, mult(scaleMatrix, vec4([...v])));
     pointsArray.push(r);
     normalsArray.push(vec4(a, b, c, 1.0));
-    typeArray.push(planetInfo.type);
   });
 };
 
@@ -112,8 +115,7 @@ const divideTriangle = (
   count,
   pointsArray,
   normalsArray,
-  planetInfo,
-  typeArray
+  planetInfo
 ) => {
   if (count > 0) {
     let ab = mix(a, b, 0.5);
@@ -124,36 +126,9 @@ const divideTriangle = (
     ac = normalize(ac, true);
     bc = normalize(bc, true);
 
-    divideTriangle(
-      a,
-      ab,
-      ac,
-      count - 1,
-      pointsArray,
-      normalsArray,
-      planetInfo,
-      typeArray
-    );
-    divideTriangle(
-      ab,
-      b,
-      bc,
-      count - 1,
-      pointsArray,
-      normalsArray,
-      planetInfo,
-      typeArray
-    );
-    divideTriangle(
-      bc,
-      c,
-      ac,
-      count - 1,
-      pointsArray,
-      normalsArray,
-      planetInfo,
-      typeArray
-    );
+    divideTriangle(a, ab, ac, count - 1, pointsArray, normalsArray, planetInfo);
+    divideTriangle(ab, b, bc, count - 1, pointsArray, normalsArray, planetInfo);
+    divideTriangle(bc, c, ac, count - 1, pointsArray, normalsArray, planetInfo);
     divideTriangle(
       ab,
       bc,
@@ -161,11 +136,10 @@ const divideTriangle = (
       count - 1,
       pointsArray,
       normalsArray,
-      planetInfo,
-      typeArray
+      planetInfo
     );
   } else {
-    triangle(a, b, c, pointsArray, normalsArray, planetInfo, typeArray);
+    triangle(a, b, c, pointsArray, normalsArray, planetInfo);
   }
 };
 
@@ -177,14 +151,13 @@ const tetrahedron = (
   pointsArray,
   normalsArray,
   planetInfo,
-  highPerf,
-  typeArray
+  highPerf
 ) => {
   const n = highPerf ? 4 : 3;
-  divideTriangle(a, b, c, n, pointsArray, normalsArray, planetInfo, typeArray);
-  divideTriangle(d, c, b, n, pointsArray, normalsArray, planetInfo, typeArray);
-  divideTriangle(a, d, b, n, pointsArray, normalsArray, planetInfo, typeArray);
-  divideTriangle(a, c, d, n, pointsArray, normalsArray, planetInfo, typeArray);
+  divideTriangle(a, b, c, n, pointsArray, normalsArray, planetInfo);
+  divideTriangle(d, c, b, n, pointsArray, normalsArray, planetInfo);
+  divideTriangle(a, d, b, n, pointsArray, normalsArray, planetInfo);
+  divideTriangle(a, c, d, n, pointsArray, normalsArray, planetInfo);
 };
 
 // r - radius.
@@ -195,26 +168,14 @@ const tetrahedron = (
 const generateCelestialBody = (r, d, dx, dy, planet, highPerf = false) => {
   let pointsArray = [];
   let normalsArray = [];
-  let typeArray = [];
 
   const planetInfo = {
     radius: r,
     distance: d + r,
     dx: dx,
     dy: dy,
-    type: planetType[planet],
   };
 
-  tetrahedron(
-    va,
-    vb,
-    vc,
-    vd,
-    pointsArray,
-    normalsArray,
-    planetInfo,
-    highPerf,
-    typeArray
-  );
-  return { pointsArray, normalsArray, typeArray };
+  tetrahedron(va, vb, vc, vd, pointsArray, normalsArray, planetInfo, highPerf);
+  return { pointsArray, normalsArray };
 };
