@@ -146,6 +146,9 @@ window.onload = main = async () => {
 
 const renderScene = async () => {
   time += 0.01;
+  
+
+  gl.uniform1f(gl.getUniformLocation(program, "time"), time);
 
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
@@ -164,6 +167,7 @@ const renderScene = async () => {
   planets.forEach((planet) => {
     let dx = Math.cos(time * relativeOrbitalSpeeds[planet]);
     let dy = Math.sin(time * relativeOrbitalSpeeds[planet]);
+
 
     const distance = planetaryDistances[planet];
     const radius = relativeRadii[planet];
@@ -206,6 +210,11 @@ const renderScene = async () => {
       gl.uniform1f(gl.getUniformLocation(program, "isSun"), true);
     } else {
       gl.uniform1f(gl.getUniformLocation(program, "isSun"), false);
+    }
+   if (planetName == "Earth") {
+      gl.uniform1f(gl.getUniformLocation(program, "isEarth"), true);
+    } else {
+      gl.uniform1f(gl.getUniformLocation(program, "isEarth"), false);
     }
 
     gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);
