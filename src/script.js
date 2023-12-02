@@ -137,8 +137,6 @@ window.onload = main = async () => {
 
 const renderScene = async () => {
   time += 0.01;
-  let dx = Math.cos(time);
-  let dy = Math.sin(time);
 
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
@@ -155,6 +153,9 @@ const renderScene = async () => {
   let planets = [...PLANET_ORDER];
 
   planets.forEach((planet) => {
+    let dx = Math.cos(time * relativeOrbitalSpeeds[planet]);
+    let dy = Math.sin(time * relativeOrbitalSpeeds[planet]);
+
     const distance = planetaryDistances[planet];
     const radius = relativeRadii[planet];
     let { pointsArray: points, normalsArray: normal } = generateCelestialBody(
