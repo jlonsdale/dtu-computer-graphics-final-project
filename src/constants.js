@@ -16,15 +16,15 @@ const PLANET_ORDER = [
 ];
 
 const planetImages = {
-  Sun: "./../common/2k_sun.jpg",
-  Mercury: "./../common/2k_mercury.jpg",
-  Venus: "./../common/2k_venus_surface.jpg",
-  Earth: "./../common/2k_earth_daymap.jpg",
-  Mars: "./../common/2k_mars.jpg",
-  Jupiter: "./../common/2k_jupiter.jpg",
-  Saturn: "./../common/2k_saturn.jpg",
-  Uranus: "./../common/2k_uranus.jpg",
-  Neptune: "./../common/2k_uranus.jpg",
+  Sun: "./public/2k_sun.jpg",
+  Mercury: "./public/2k_mercury.jpg",
+  Venus: "./public/2k_venus_surface.jpg",
+  Earth: "./public/2k_earth_daymap.jpg",
+  Mars: "./public/2k_mars.jpg",
+  Jupiter: "./public/2k_jupiter.jpg",
+  Saturn: "./public/2k_saturn.jpg",
+  Uranus: "./public/2k_uranus.jpg",
+  Neptune: "./public/2k_uranus.jpg",
 };
 
 const planetColors = {
