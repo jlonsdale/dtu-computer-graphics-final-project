@@ -49,23 +49,23 @@
 
     <script id="fragment-shader" type="x-shader/x-fragment">
       precision mediump float;
+      uniform sampler2D texture;
+      varying vec2 fTexCoords;
 
       varying vec3 N;
       varying vec3 L;
       varying vec3 E;
       varying float v_attenuation;
 
-      uniform sampler2D texture;
-
-      varying vec2 fTexCoords;
-
       uniform vec4 ksColor;
+      uniform vec4 kdColor;
+      uniform vec4 kaColor;
 
-      uniform float Li;
+      uniform float kd;
       uniform float ks;
+      uniform float ka;
+      uniform float Li;
       uniform float shininess;
-
-      varying float type;
 
       void main() {
         vec3 NN = normalize(N);
@@ -75,13 +75,15 @@
         vec3 H = normalize(EE + NN);
 
         vec4 Lrs;
+        vec4 Lra = ka*Li*kaColor;
+        vec4 Lrd = vec4((kd*dot(LL,NN)*kdColor).xyz,1.0);
+
         float intensity = Li*v_attenuation;
 
         if (dot(LL, NN) < 0.0) Lrs = vec4(0.0, 0.0, 0.0, 1.0);
         else Lrs = ksColor*max(ks*intensity*pow(max(dot(NN,H),0.0),shininess),0.0);
 
-        gl_FragColor = texture2D(texture, fTexCoords) + Lrs;
-
+        gl_FragColor = texture2D(texture, fTexCoords) + vec4(Lrs.xyz,0.0) + Lra + Lrd;
 
       }
     </script>

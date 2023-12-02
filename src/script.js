@@ -19,8 +19,12 @@ let at = vec3(0.0, 0.0, 0.0);
 let up = vec3(0.0, 1.0, 0.0);
 let animationRequestId;
 
+let kdcol = vec4(0.8, 0.8, 0.8, 1.0);
+let kacol = vec4(0.7, 0.5, 0.2, 1.0);
 let kscol = vec4(1.0, 1.0, 1.0, 1.0);
 
+let ka_val = 0.5;
+let kd_val = 0.5;
 let ks_val = 1;
 let li_val = 1.5;
 let shininess = 100.0;
@@ -126,6 +130,11 @@ window.onload = main = async () => {
   textureLocation = gl.getUniformLocation(program, "texture");
 
   gl.uniform4fv(gl.getUniformLocation(program, "ksColor"), flatten(kscol));
+  gl.uniform4fv(gl.getUniformLocation(program, "kaColor"), flatten(kacol));
+  gl.uniform4fv(gl.getUniformLocation(program, "kdColor"), flatten(kdcol));
+
+  gl.uniform1f(gl.getUniformLocation(program, "kd"), kd_val);
+  gl.uniform1f(gl.getUniformLocation(program, "ks"), ka_val);
   gl.uniform1f(gl.getUniformLocation(program, "ks"), ks_val);
   gl.uniform1f(gl.getUniformLocation(program, "li"), li_val);
   gl.uniform1f(gl.getUniformLocation(program, "shine"), shininess);
