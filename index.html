@@ -67,6 +67,8 @@
       uniform float Li;
       uniform float shininess;
 
+      uniform bool isSun;
+
       void main() {
         vec3 NN = normalize(N);
         vec3 LL = normalize(L);
@@ -82,9 +84,12 @@
 
         if (dot(LL, NN) < 0.0) Lrs = vec4(0.0, 0.0, 0.0, 1.0);
         else Lrs = ksColor*max(ks*intensity*pow(max(dot(NN,H),0.0),shininess),0.0);
-
-        gl_FragColor = texture2D(texture, fTexCoords) + vec4(Lrs.xyz,0.0) + Lra + Lrd;
-
+        if(isSun==true) {
+          gl_FragColor = texture2D(texture, fTexCoords);
+        }
+        else {
+          gl_FragColor = texture2D(texture, fTexCoords) + vec4(Lrs.xyz,0.0) + Lra + Lrd;
+        }
       }
     </script>
   </head>

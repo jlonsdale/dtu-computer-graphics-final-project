@@ -202,6 +202,12 @@ const renderScene = async () => {
   gl.uniformMatrix4fv(projectionMatrixLoc, false, flatten(P));
 
   planets.forEach((planetName) => {
+    if (planetName == "Sun") {
+      gl.uniform1f(gl.getUniformLocation(program, "isSun"), true);
+    } else {
+      gl.uniform1f(gl.getUniformLocation(program, "isSun"), false);
+    }
+
     gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);
     gl.bufferData(
       gl.ARRAY_BUFFER,
