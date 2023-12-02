@@ -63,6 +63,19 @@ const relativeRadii = {
   Neptune: 3.88,
 };
 
+const earthOrbitalSpeed = 29.78; // Earth's orbital speed in kilometers per second
+
+const relativeOrbitalSpeeds = {
+  Mercury: (47.87 / earthOrbitalSpeed).toFixed(2),
+  Venus: (35.02 / earthOrbitalSpeed).toFixed(2),
+  Earth: "1.00", // Earth's relative speed is 1 (by definition)
+  Mars: (24.077 / earthOrbitalSpeed).toFixed(2),
+  Jupiter: (13.07 / earthOrbitalSpeed).toFixed(2),
+  Saturn: (9.69 / earthOrbitalSpeed).toFixed(2),
+  Uranus: (6.81 / earthOrbitalSpeed).toFixed(2),
+  Neptune: (5.43 / earthOrbitalSpeed).toFixed(2),
+};
+
 const calculateCumulativeSum = () => {
   let sum = 0;
   //deconstruct object 2 ovid stupid mutable objects javascript fucker
