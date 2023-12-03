@@ -35,6 +35,7 @@ let maxscrollValue = 1000;
 let planetTextures = {};
 let planetVertexLength = {};
 let program;
+let z = 15;
 
 let eye = vec3(0, scrollValue, 15);
 
@@ -62,20 +63,22 @@ const handleScroll = (event) => {
     minscrollValue,
     Math.min(maxscrollValue, scrollValue + (event.deltaY < 0 ? -1.0 : 1.0))
   );
-  eye = vec3(0, scrollValue, 15);
+  eye = vec3(0, scrollValue, z);
 };
 window.addEventListener("wheel", handleScroll);
 
 window.addEventListener("keydown", function (event) {
   if (event.key === "ArrowUp") {
-    if (eye[2] < 100) {
-      eye = vec3(eye[0], eye[1], eye[2] + 1);
+    if (z < 100) {
+      z += 1.0;
+      eye = vec3(eye[0], eye[1], z);
     }
     event.preventDefault();
   }
   if (event.key === "ArrowDown") {
-    if (eye[2] > 1) {
-      eye = vec3(eye[0], eye[1], eye[2] - 1);
+    if (z > 1) {
+      z -= 1.0;
+      eye = vec3(eye[0], eye[1], z);
     }
     event.preventDefault();
   }
