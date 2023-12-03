@@ -71,11 +71,13 @@ window.addEventListener("keydown", function (event) {
     if (eye[2] < 100) {
       eye = vec3(eye[0], eye[1], eye[2] + 1);
     }
+    event.preventDefault();
   }
   if (event.key === "ArrowDown") {
     if (eye[2] > 1) {
       eye = vec3(eye[0], eye[1], eye[2] - 1);
     }
+    event.preventDefault();
   }
 });
 
