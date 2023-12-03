@@ -213,6 +213,9 @@ const renderScene = async () => {
       );
       V = lookAt(eye, at, up);
       P = perspective(100, 1, distance + near, distance + far + scrollValue);
+    } else {
+      V = lookAt(eye, at, up);
+      P = perspective(-100, 1, near, scrollValue + far);
     }
     planetPoints[planet] = [...points];
     planetNormals[planet] = [...normal];
