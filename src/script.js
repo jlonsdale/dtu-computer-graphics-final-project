@@ -44,7 +44,6 @@ let currentPlanet = null;
 const createPlanetButtons = async () => {
   const planetButtonsDiv = document.querySelector(".planet-buttons-container");
   let planets = [...PLANET_ORDER];
-  planets.pop();
   planets.forEach((planet) => {
     if (planet != "Sun") {
       let button = document.createElement("button");
