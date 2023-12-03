@@ -14,7 +14,6 @@ let iBuffer;
 let V, P, N;
 let modelViewMatrixLoc, projectionMatrixLoc, textureLocation;
 
-let eye;
 let at = vec3(0.0, 0.0, 0.0);
 let up = vec3(0.0, 1.0, 0.0);
 let animationRequestId;
@@ -36,6 +35,8 @@ let maxscrollValue = 1000;
 let planetTextures = {};
 let planetVertexLength = {};
 let program;
+
+let eye = vec3(0, scrollValue, 15);
 
 let currentPlanet = null;
 
@@ -61,8 +62,22 @@ const handleScroll = (event) => {
     minscrollValue,
     Math.min(maxscrollValue, scrollValue + (event.deltaY < 0 ? -1.0 : 1.0))
   );
+  eye = vec3(0, scrollValue, 15);
 };
 window.addEventListener("wheel", handleScroll);
+
+window.addEventListener("keydown", function (event) {
+  if (event.key === "ArrowUp") {
+    if (eye[2] < 100) {
+      eye = vec3(eye[0], eye[1], eye[2] + 1);
+    }
+  }
+  if (event.key === "ArrowDown") {
+    if (eye[2] > 1) {
+      eye = vec3(eye[0], eye[1], eye[2] - 1);
+    }
+  }
+});
 
 const loadImages = async () => {
   let planets = [...PLANET_ORDER];
@@ -100,6 +115,7 @@ window.onload = main = async () => {
     scrollValue = 100;
     minscrollValue = 100;
     maxscrollValue = 1000;
+    eye = vec3(0, scrollValue, 15);
   });
 
   gl = initWebGL("c");
@@ -146,19 +162,15 @@ window.onload = main = async () => {
 
 const renderScene = async () => {
   time += 0.01;
-  
 
   gl.uniform1f(gl.getUniformLocation(program, "time"), time);
 
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-  if (!currentPlanet) {
-    eye = vec3(0, scrollValue, 15);
-    at = vec3(0.0, 0.0, 0.0);
-    up = vec3(0.0, 1.0, 0.0);
-    V = lookAt(eye, at, up);
-    P = perspective(-100, 1, near, scrollValue + far);
-  }
+  at = vec3(0.0, 0.0, 0.0);
+  up = vec3(0.0, 1.0, 0.0);
+  V = lookAt(eye, at, up);
+  P = perspective(-100, 1, near, scrollValue + far);
 
   let planetPoints = {};
   let planetNormals = {};
@@ -167,7 +179,6 @@ const renderScene = async () => {
   planets.forEach((planet) => {
     let dx = Math.cos(time * relativeOrbitalSpeeds[planet]);
     let dy = Math.sin(time * relativeOrbitalSpeeds[planet]);
-
 
     const distance = planetaryDistances[planet];
     const radius = relativeRadii[planet];
@@ -211,7 +222,7 @@ const renderScene = async () => {
     } else {
       gl.uniform1f(gl.getUniformLocation(program, "isSun"), false);
     }
-   if (planetName == "Earth") {
+    if (planetName == "Earth") {
       gl.uniform1f(gl.getUniformLocation(program, "isEarth"), true);
     } else {
       gl.uniform1f(gl.getUniformLocation(program, "isEarth"), false);
