@@ -119,7 +119,7 @@ window.onload = main = async () => {
     scrollValue = 100;
     minscrollValue = 100;
     maxscrollValue = 1000;
-    eye = vec3(0, scrollValue, 15);
+    eye = vec3(0, scrollValue, z);
   });
 
   gl = initWebGL("c");
