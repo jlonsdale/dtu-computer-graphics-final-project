@@ -1,7 +1,7 @@
 let pointsArray = [];
 let typeArray = [];
 
-let time = 0;
+let time = 42; //start an an arbitrary value = looks more real
 let dtime = 0.01;
 
 let far = 500;
