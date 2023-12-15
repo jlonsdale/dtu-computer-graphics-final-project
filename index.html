@@ -48,10 +48,17 @@
         E = a_Position.xyz;
        
         type = a_Type.x;
+        
+        float earthtime = time * 365.0 *1.0138 / (2.0*3.141592);
 
-        if (isEarth==true) u = 1.0 - atan(a_Normal.z,a_Normal.x)/(2.0 * 3.141592 / (0.5* time));
-        else u = 1.0 - atan(a_Normal.z,a_Normal.x)/(2.0 * 3.141592);
+        u = 1.0 - atan(a_Normal.z,a_Normal.x)/(2.0 * 3.141592);
         v = acos(a_Normal.y)/3.141592;
+
+        float c = cos(earthtime);
+
+        if (isEarth==true) {
+          u = u * c;
+          }
 
         fTexCoords = vec2(u,v);
         }

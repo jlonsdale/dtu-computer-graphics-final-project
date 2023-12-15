@@ -168,7 +168,7 @@ const tetrahedron = (
   planetInfo,
   highPerf
 ) => {
-  const n = highPerf ? 4 : 3;
+  const n = highPerf ? 5 : 3;
   divideTriangle(a, b, c, n, pointsArray, normalsArray, planetInfo);
   divideTriangle(d, c, b, n, pointsArray, normalsArray, planetInfo);
   divideTriangle(a, d, b, n, pointsArray, normalsArray, planetInfo);

@@ -45,7 +45,7 @@ const createPlanetButtons = async () => {
   const planetButtonsDiv = document.querySelector(".planet-buttons-container");
   let planets = [...PLANET_ORDER];
   planets.forEach((planet) => {
-    if (planet != "Sun") {
+        if (!(planet == "Sun" || planet == "Sky") ) {
       let button = document.createElement("button");
       button.textContent = planet;
       button.id = planet;
@@ -166,8 +166,11 @@ window.onload = main = async () => {
 
 const renderScene = async () => {
   time += 0.01;
-
-  gl.uniform1f(gl.getUniformLocation(program, "time"), time);
+  
+  if (currentPlanet == "Earth") dtime = 0.00273 ;
+  else dtime = 1.0;
+  
+  gl.uniform1f(gl.getUniformLocation(program, "time"), time*dtime);
 
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
@@ -181,8 +184,9 @@ const renderScene = async () => {
   let planets = [...PLANET_ORDER];
 
   planets.forEach((planet) => {
-    let dx = Math.cos(time * relativeOrbitalSpeeds[planet]);
-    let dy = Math.sin(time * relativeOrbitalSpeeds[planet]);
+
+    let dx = Math.cos(time*dtime * relativeOrbitalSpeeds[planet]);
+    let dy = Math.sin(time*dtime * relativeOrbitalSpeeds[planet]);
 
     const distance = planetaryDistances[planet];
     const radius = relativeRadii[planet];
