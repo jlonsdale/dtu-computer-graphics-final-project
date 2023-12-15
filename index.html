@@ -1,4 +1,5 @@
 <DOCTYPE html>
+
 <html>
   <head>
     <link rel="stylesheet" type="text/css" href="styles.css" />
@@ -99,24 +100,29 @@
         else Lrs = ksColor*max(ks*intensity*pow(max(dot(NN,H),0.0),shininess),0.0);
         if(isSun==true || isSkybox == true) {
           gl_FragColor = texture2D(texture, fTexCoords);
+          }
+          else {
+            gl_FragColor = texture2D(texture, fTexCoords) + vec4(Lrs.xyz,0.0) + Lra + Lrd;
+          }
         }
-        else {
-          gl_FragColor = texture2D(texture, fTexCoords) + vec4(Lrs.xyz,0.0) + Lra + Lrd;
-        }
-      }
-    </script>
-  </head>
-  <body>
-    <div id="container">
-      <h2>🚀 Space Simulation in WebGL 🌌</h2>
-    </div>
-    <div id="container">
-      <div class="planet-buttons-container">
-        <button id="clear">Reset View</button>
+      </script>
+    </head>
+    <body>
+      <div id="container">
+        <h2>🚀 Space Simulation in WebGL 🌌</h2>
       </div>
-    </div>
-    <div id="container">
-      <canvas id="c" height="800" width="800">Canvas not supported</canvas>
-    </div>
-  </body>
-</html>
+      <div id="container">
+        <div class="planet-buttons-container">
+          <button id="clear">Reset View</button>
+        </div>
+      </div>
+      <div id="container">
+        Please use the up and down arrow to pitch the camera and the mouse wheel
+        for zoom in/zoom out
+      </div>
+      <div id="container">
+        <canvas id="c" height="800" width="800">Canvas not supported</canvas>
+      </div>
+    </body>
+  </html>
+</DOCTYPE>
