@@ -1,96 +1,105 @@
 <DOCTYPE html>
-  <html>
-    <head>
-      <link rel="stylesheet" type="text/css" href="styles.css" />
-      <script type="text/javascript" src="./public/webgl-utils.js"></script>
-      <script type="text/javascript" src="./public/initShaders.js"></script>
-      <script type="text/javascript" src="./public/MV.js"></script>
-      <script type="text/javascript" src="./src/script.js"></script>
-      <script type="text/javascript" src="./src/constants.js"></script>
 
-      <script id="vertex-shader" type="x-shader/x-vertex">
-        attribute vec4 a_Position;
-        attribute vec4 a_Normal;
-        attribute vec2 a_Type;
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="styles.css" />
+    <script type="text/javascript" src="./public/webgl-utils.js"></script>
+    <script type="text/javascript" src="./public/initShaders.js"></script>
+    <script type="text/javascript" src="./public/MV.js"></script>
+    <script type="text/javascript" src="./src/script.js"></script>
+    <script type="text/javascript" src="./src/constants.js"></script>
 
-        uniform mat4 u_modelViewMatrix;
-        uniform mat4 u_projectionMatrix;
+    <script id="vertex-shader" type="x-shader/x-vertex">
+      attribute vec4 a_Position;
+      attribute vec4 a_Normal;
+      attribute vec2 a_Type;
 
-        varying vec2 fTexCoords;
+      uniform mat4 u_modelViewMatrix;
+      uniform mat4 u_projectionMatrix;
 
-        uniform sampler2D texture;
+      varying vec2 fTexCoords;
 
-        varying vec3 N;
-        varying vec3 L;
-        varying vec3 E;
-        varying float v_attenuation;
+      uniform sampler2D texture;
 
-        varying float u;
-        varying float v;
-        varying float type;
+      varying vec3 N;
+      varying vec3 L;
+      varying vec3 E;
+      varying float v_attenuation;
 
-        uniform bool isEarth;
-        uniform float time;
+      varying float u;
+      varying float v;
+      varying float type;
+      
+      uniform bool isEarth;
+      uniform bool isSkybox;
+      uniform float time;
 
-        void main() {
+      void main() {
 
-          gl_Position = u_projectionMatrix * u_modelViewMatrix * a_Position;
-
-          N = a_Normal.xyz;
-          L = - a_Position.xyz;
-          E = a_Position.xyz;
-
-          type = a_Type.x;
-
-          if (isEarth==true) u = 1.0 - atan(a_Normal.z,a_Normal.x)/(2.0 * 3.141592 / (0.365 * time));
-          else u = 1.0 - atan(a_Normal.z,a_Normal.x)/(2.0 * 3.141592);
-          v = acos(a_Normal.y)/3.141592;
-
-          fTexCoords = vec2(u,v);
-
-          v_attenuation = 1.0/pow(length(a_Position.xyz),2.0);
+        if (isSkybox == true) { 
+           gl_Position = u_projectionMatrix * a_Position;
+           fTexCoords = vec2(a_Position.x, a_Position.y);
         }
-      </script>
+        else {
+        gl_Position = u_projectionMatrix * u_modelViewMatrix * a_Position;
 
-      <script id="fragment-shader" type="x-shader/x-fragment">
-        precision mediump float;
-        uniform sampler2D texture;
-        varying vec2 fTexCoords;
+        N = a_Normal.xyz;
+        L = - a_Position.xyz;
+        E = a_Position.xyz;
+       
+        type = a_Type.x;
 
-        varying vec3 N;
-        varying vec3 L;
-        varying vec3 E;
-        varying float v_attenuation;
+        if (isEarth==true) u = 1.0 - atan(a_Normal.z,a_Normal.x)/(2.0 * 3.141592 / (0.5* time));
+        else u = 1.0 - atan(a_Normal.z,a_Normal.x)/(2.0 * 3.141592);
+        v = acos(a_Normal.y)/3.141592;
 
-        uniform vec4 ksColor;
-        uniform vec4 kdColor;
-        uniform vec4 kaColor;
+        fTexCoords = vec2(u,v);
+        }
 
-        uniform float kd;
-        uniform float ks;
-        uniform float ka;
-        uniform float Li;
-        uniform float shininess;
+        v_attenuation = 1.0/pow(length(a_Position.xyz),2.0);
+      }
+    </script>
 
-        uniform bool isSun;
+    <script id="fragment-shader" type="x-shader/x-fragment">
+      precision mediump float;
+      uniform sampler2D texture;
+      varying vec2 fTexCoords;
 
-        void main() {
-          vec3 NN = normalize(N);
-          vec3 LL = normalize(L);
-          vec3 EE = normalize(E);
+      varying vec3 N;
+      varying vec3 L;
+      varying vec3 E;
+      varying float v_attenuation;
 
-          vec3 H = normalize(EE + NN);
+      uniform vec4 ksColor;
+      uniform vec4 kdColor;
+      uniform vec4 kaColor;
 
-          vec4 Lrs;
-          vec4 Lra = ka*Li*kaColor;
-          vec4 Lrd = vec4((kd*dot(LL,NN)*kdColor).xyz,1.0);
+      uniform float kd;
+      uniform float ks;
+      uniform float ka;
+      uniform float Li;
+      uniform float shininess;
 
-          float intensity = Li*v_attenuation;
+      uniform bool isSun;
+      uniform bool isSkybox;
 
-          if (dot(LL, NN) < 0.0) Lrs = vec4(0.0, 0.0, 0.0, 1.0);
-          else Lrs = ksColor*max(ks*intensity*pow(max(dot(NN,H),0.0),shininess),0.0);
-          if(isSun==true) {
-            gl_FragColor = texture2D(texture, fTexCoords);
+      void main() {
+        vec3 NN = normalize(N);
+        vec3 LL = normalize(L);
+        vec3 EE = normalize(E);
+
+        vec3 H = normalize(EE + NN);
+
+        vec4 Lrs;
+        vec4 Lra = ka*Li*kaColor;
+        vec4 Lrd = vec4((kd*dot(LL,NN)*kdColor).xyz,1.0);
+
+        float intensity = Li*v_attenuation;
+
+        if (dot(LL, NN) < 0.0) Lrs = vec4(0.0, 0.0, 0.0, 1.0);
+        else Lrs = ksColor*max(ks*intensity*pow(max(dot(NN,H),0.0),shininess),0.0);
+        if(isSun==true || isSkybox == true) {
+          gl_FragColor = texture2D(texture, fTexCoords);
           }
           else {
             gl_FragColor = texture2D(texture, fTexCoords) + vec4(Lrs.xyz,0.0) + Lra + Lrd;

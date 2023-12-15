@@ -222,6 +222,8 @@ const renderScene = async () => {
 
   gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(V));
   gl.uniformMatrix4fv(projectionMatrixLoc, false, flatten(P));
+  
+  gl.uniform1f(gl.getUniformLocation(program, "isSkybox"), false);
 
   planets.forEach((planetName) => {
     if (planetName == "Sun") {
@@ -251,6 +253,23 @@ const renderScene = async () => {
     gl.uniform1i(textureLocation, 0);
     gl.drawArrays(gl.TRIANGLES, 0, planetPoints[planetName].length);
   });
+
+  gl.uniform1f(gl.getUniformLocation(program, "isSkybox"), true);
+
+  let skybox = drawCube(vec3(-1000.0,-1000.0,-1000.0),1200,1200,1200);
+  let skybox_vertices = skybox[0];
+  let skybox_texture = skybox[1];
+
+  gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);
+  gl.bufferData(gl.ARRAY_BUFFER,flatten(skybox_vertices),gl.STATIC_DRAW);
+
+  gl.bindTexture(gl.TEXTURE_2D, planetTextures["Sky"]);
+  gl.uniform1i(textureLocation, 0);
+
+  gl.drawArrays(gl.TRIANGLES, 0, skybox_vertices.length);
+
+  gl.uniform1f(gl.getUniformLocation(program, "isSkybox"), false);
+
 
   animationRequestId = requestAnimationFrame(renderScene);
 };
