@@ -10,8 +10,8 @@ relaive sizes and relative distances
 
 - [x] task 4 - add textures
 - [x] task 5 - add lighting from the sun
-- [ ] task 6 - allow user to pitch and move the camera and zoom
-- [ ] task 7 - add skybox.
+- [x] task 6 - allow user to pitch and move the camera and zoom
+- [x] task 7 - add skybox.
 - [ ] task 8 - add the rings to saturn.
       
 ## here i will just put notes for when writing the report
