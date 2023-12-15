@@ -37,7 +37,7 @@
       void main() {
 
         if (isSkybox == true) { 
-           gl_Position = u_projectionMatrix * a_Position;
+           gl_Position = u_projectionMatrix *  a_Position;
            fTexCoords = vec2(a_Position.x, a_Position.y);
         }
         else {

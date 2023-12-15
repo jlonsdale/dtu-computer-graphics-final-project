@@ -198,54 +198,63 @@ const generateCelestialBody = (r, d, dx, dy, planet, highPerf = false) => {
 
 function drawCube(origin,width,height,depth) {
   vertices = [];
+  
+  // front
+  vertices.push(vec4(origin[0], origin[1],origin[2],1));
+  vertices.push(vec4(origin[0]+width, origin[1],origin[2],1));
+  vertices.push(vec4(origin[0], origin[1] + height,origin[2],1));
+
+  vertices.push(vec4(origin[0], origin[1],origin[2],1));
+  vertices.push(vec4(origin[0]+width, origin[1],origin[2],1));
+  vertices.push(vec4(origin[0]+width, origin[1] + height,origin[2],1));
+
+  // back
+  vertices.push(vec4(origin[0]+width, origin[1]+height,origin[2]+depth,1));
+  vertices.push(vec4(origin[0]+width, origin[1],origin[2]+depth,1));
+  vertices.push(vec4(origin[0], origin[1],origin[2]+depth,1));
+
+  vertices.push(vec4(origin[0]+width, origin[1]+height,origin[2]+depth,1));
+  vertices.push(vec4(origin[0], origin[1]+height,origin[2]+depth,1));
+  vertices.push(vec4(origin[0], origin[1],origin[2]+depth,1));
+
 
   // top
   vertices.push(vec4(origin[0], origin[1],origin[2],1));
-  vertices.push(vec4(origin[0]+width, origin[1]+height,origin[2],1));
+  vertices.push(vec4(origin[0], origin[1],origin[2]+depth,1));
   vertices.push(vec4(origin[0]+width, origin[1],origin[2]+depth,1));
-
-  vertices.push(vec4(origin[0], origin[1],origin[2],1));
-  vertices.push(vec4(origin[0], origin[1]+height ,origin[2]+depth,1));
-  vertices.push(vec4(origin[0]+width, origin[1],origin[2]+depth,1));
-  
-
-  // Back
-  vertices.push(vec4(origin[0], origin[1],origin[2],1));
-  vertices.push(vec4(origin[0], origin[1]+height,origin[2],1));
-  vertices.push(vec4(origin[0]+width, origin[1]+height,origin[2],1));
-  
+ 
   vertices.push(vec4(origin[0], origin[1],origin[2],1));
   vertices.push(vec4(origin[0]+width, origin[1],origin[2],1));
-  vertices.push(vec4(origin[0]+width, origin[1]+height,origin[2],1));
-  
+  vertices.push(vec4(origin[0]+width, origin[1],origin[2]+depth,1));
+ 
   // Bottom
   vertices.push(vec4(origin[0], origin[1]+height,origin[2],1));
   vertices.push(vec4(origin[0]+width, origin[1]+height,origin[2],1));
   vertices.push(vec4(origin[0]+width, origin[1]+height,origin[2]+depth,1));
-
+  
   vertices.push(vec4(origin[0], origin[1] + height,origin[2],1));
   vertices.push(vec4(origin[0], origin[1] + height,origin[2]+depth,1));
   vertices.push(vec4(origin[0]+width, origin[1] + height,origin[2]+depth,1));
-
-
+  
   // Right 
   vertices.push(vec4(origin[0], origin[1],origin[2],1));
   vertices.push(vec4(origin[0], origin[1]+height,origin[2],1));
   vertices.push(vec4(origin[0], origin[1]+height,origin[2]+depth,1));
   
   vertices.push(vec4(origin[0], origin[1],origin[2],1));
-  vertices.push(vec4(origin[0], origin[1]+height,origin[2]+depth,1));
+  vertices.push(vec4(origin[0], origin[1],origin[2]+depth,1));
   vertices.push(vec4(origin[0], origin[1]+height,origin[2]+depth,1));
   
-  // Left
+  //Left
   vertices.push(vec4(origin[0]+width, origin[1],origin[2],1));
   vertices.push(vec4(origin[0]+width, origin[1]+height,origin[2],1));
   vertices.push(vec4(origin[0]+width, origin[1]+height,origin[2]+depth,1));
   
   vertices.push(vec4(origin[0]+width, origin[1],origin[2],1));
+  vertices.push(vec4(origin[0]+width, origin[1],origin[2]+depth,1));
   vertices.push(vec4(origin[0]+width, origin[1]+height,origin[2]+depth,1));
-  vertices.push(vec4(origin[0]+width, origin[1]+height,origin[2]+depth,1));
-  
+
+  //
   textureCoords = [];
 
   textureCoords.push(vec2(0.0,0.0));
