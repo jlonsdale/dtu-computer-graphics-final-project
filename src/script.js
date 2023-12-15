@@ -4,7 +4,7 @@ let typeArray = [];
 let time = 42; //start an an arbitrary value = looks more real
 let dtime = 0.01;
 
-let far = 600;
+let far = 1200;
 let near = 1;
 
 let vBuffer;
@@ -256,7 +256,7 @@ const renderScene = async () => {
 
   gl.uniform1f(gl.getUniformLocation(program, "isSkybox"), true);
 
-  let skybox = drawCube(vec3(-200.0,-200.0,-200.0),1000,800,800);
+  let skybox = drawCube(vec3(-600.0,-800.0,-600.0),3000,3000,3000);
   let skybox_vertices = skybox[0];
   let skybox_texture = skybox[1];
 
