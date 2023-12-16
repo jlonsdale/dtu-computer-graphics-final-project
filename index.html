@@ -48,7 +48,7 @@
 
           type = a_Type.x;
 
-          if (isEarth==true) u = 1.0 - atan(a_Normal.z,a_Normal.x)/(2.0 * 3.141592 / (0.5* time));
+          if (isEarth==true) u = 1.0 - atan(a_Normal.z,a_Normal.x)/(2.0 * 3.141592);
           else u = 1.0 - atan(a_Normal.z,a_Normal.x)/(2.0 * 3.141592);
           v = acos(a_Normal.y)/3.141592;
 
@@ -91,29 +91,29 @@
           vec3 EE = normalize(E);
 
           vec3 H = normalize(EE + NN);
-
+          
+          vec4 Color = texture2D(texture, fTexCoords);
           vec4 Lrs;
-          vec4 Lra = ka*Li*kaColor;
-          vec4 Lrd = vec4((kd*dot(LL,NN)*kdColor).xyz,1.0);
+          vec4 Lra = ka*vec4(Color.xyz, 0.0);
+          vec4 Lrd = vec4((kd*dot(LL,NN)*Color).xyz,1.0);
 
-          float intensity = 0.2 + v_attenuation*sunRadience*2000.0;
+          float intensity = 0.5 + v_attenuation*sunRadience*7000.0;
           if(useAttenuation==false) {
             intensity = sunRadience;
           }
 
-          if (dot(LL, NN) < 0.0) {Lrs = vec4(0.3, 0.3, 0.3, 1.0);}
-
-          else {Lrs = ksColor*max(ks*intensity*pow(max(dot(NN,H),0.0),shininess),0.0);}
+          if (dot(LL, NN) < 0.0) {Lrs = vec4(0.1, 0.1, 0.1, 1.0);}
+          else {Lrs = ksColor*max(ks*pow(max(dot(NN,H),0.0),shininess),0.0);}
 
           if(isSun==true) {
-            gl_FragColor = texture2D(texture, fTexCoords);
+            gl_FragColor = Color;
           }
           else if (isSkybox==true) {
             vec2 skyboxTexCoords = vec2(fTexCoords.x*0.005, fTexCoords.y*0.005);
             gl_FragColor = texture2D(texture, skyboxTexCoords)*0.4;
           }
           else {
-            gl_FragColor = texture2D(texture, fTexCoords) * (vec4(Lrs.xyz,0.0) + Lra + Lrd)*intensity;
+            gl_FragColor = (vec4(Lrs.xyz,0.0) + Lrd + Lra) * intensity;
           }
 
           gl_FragColor.a = 1.0;
