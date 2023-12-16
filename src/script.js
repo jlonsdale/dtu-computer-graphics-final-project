@@ -14,6 +14,7 @@ let iBuffer;
 let V, P, N;
 let modelViewMatrixLoc, projectionMatrixLoc, textureLocation;
 
+const toRadians = Math.PI/180;
 let at = vec3(0.0, 0.0, 0.0);
 let up = vec3(0.0, 1.0, 0.0);
 let animationRequestId;
@@ -22,12 +23,12 @@ let kdcol = vec4(0.8, 0.8, 0.8, 1.0);
 let kacol = vec4(0.7, 0.5, 0.2, 1.0);
 let kscol = vec4(1.0, 1.0, 1.0, 1.0);
 
-let ka_val = 0.5;
-let kd_val = 0.5;
-let ks_val = 1;
+let ka_val = 0.9;
+let kd_val = 1.0;
+let ks_val = 0.1;
 let li_val = 1.5;
 let sunRadience = 0.5;
-let shininess = 100.0;
+let shininess = 10.0;
 
 let scrollValue = 100;
 let minscrollValue = 100;
@@ -225,11 +226,21 @@ const renderScene = async () => {
         scrollValue = minscrollValue + 1;
       }
       at = vec3(points[0][0], points[0][1], points[0][2]);
-      eye = vec3(
+
+      if (planet == "Earth") {
+        eye = vec3(
+        points[0][0] + 2 * radius,
+        points[0][1] + 2 * radius,
+        scrollValue 
+        );
+      } else {
+        eye = vec3(
         points[0][0] + 2 * radius,
         points[0][1] + 2 * radius,
         scrollValue
-      );
+        );
+      } 
+
       V = lookAt(eye, at, up);
       P = perspective(100, 1, distance + near, distance + far + scrollValue);
     } else {
