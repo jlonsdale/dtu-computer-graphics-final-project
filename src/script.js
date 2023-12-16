@@ -26,6 +26,7 @@ let ka_val = 0.5;
 let kd_val = 0.5;
 let ks_val = 1;
 let li_val = 1.5;
+let sunRadience = 0.5;
 let shininess = 100.0;
 
 let scrollValue = 100;
@@ -37,6 +38,9 @@ let planetVertexLength = {};
 let program;
 let z = 15;
 
+let useAttenuation = false;
+let useSkybox = false;
+
 let eye = vec3(0, scrollValue, 15);
 
 let currentPlanet = null;
@@ -45,7 +49,7 @@ const createPlanetButtons = async () => {
   const planetButtonsDiv = document.querySelector(".planet-buttons-container");
   let planets = [...PLANET_ORDER];
   planets.forEach((planet) => {
-    if (planet != "Sun") {
+    if (planet != "Sun" && planet != "Sky") {
       let button = document.createElement("button");
       button.textContent = planet;
       button.id = planet;
@@ -122,6 +126,17 @@ window.onload = main = async () => {
     eye = vec3(0, scrollValue, z);
   });
 
+  const slider = document.getElementById("slider");
+  slider.addEventListener("input", (e) => {
+    sunRadience = parseFloat(e.target.value);
+    console.log(sunRadience);
+  });
+
+  const attenuationCheckbox = document.getElementById("attenuation-checkbox");
+  attenuationCheckbox.addEventListener("change", () => {
+    useAttenuation = !useAttenuation;
+  });
+
   gl = initWebGL("c");
   gl.clearColor(0.1, 0.0, 0.36, 1.0);
   gl.enable(gl.DEPTH_TEST);
@@ -168,6 +183,11 @@ const renderScene = async () => {
   time += 0.01;
 
   gl.uniform1f(gl.getUniformLocation(program, "time"), time);
+  gl.uniform1f(gl.getUniformLocation(program, "sunRadience"), sunRadience);
+  gl.uniform1f(
+    gl.getUniformLocation(program, "useAttenuation"),
+    useAttenuation
+  );
 
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
@@ -222,7 +242,7 @@ const renderScene = async () => {
 
   gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(V));
   gl.uniformMatrix4fv(projectionMatrixLoc, false, flatten(P));
-  
+
   gl.uniform1f(gl.getUniformLocation(program, "isSkybox"), false);
 
   planets.forEach((planetName) => {
@@ -255,13 +275,12 @@ const renderScene = async () => {
   });
 
   gl.uniform1f(gl.getUniformLocation(program, "isSkybox"), true);
-
-  let skybox = drawCube(vec3(-200.0,-200.0,-200.0),1000,800,800);
+  let skybox = drawCube(vec3(-200.0, -200.0, -150.0), 1000, 800, 800);
   let skybox_vertices = skybox[0];
   let skybox_texture = skybox[1];
 
   gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);
-  gl.bufferData(gl.ARRAY_BUFFER,flatten(skybox_vertices),gl.STATIC_DRAW);
+  gl.bufferData(gl.ARRAY_BUFFER, flatten(skybox_vertices), gl.STATIC_DRAW);
 
   gl.bindTexture(gl.TEXTURE_2D, planetTextures["Sky"]);
   gl.uniform1i(textureLocation, 0);
@@ -269,7 +288,6 @@ const renderScene = async () => {
   gl.drawArrays(gl.TRIANGLES, 0, skybox_vertices.length);
 
   gl.uniform1f(gl.getUniformLocation(program, "isSkybox"), false);
-
 
   animationRequestId = requestAnimationFrame(renderScene);
 };
