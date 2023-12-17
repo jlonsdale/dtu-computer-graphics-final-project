@@ -4,11 +4,12 @@ let typeArray = [];
 let time = 42; //start an an arbitrary value = looks more real
 let dtime = 0.01;
 
-let far = 600;
-let near = 1;
+let far = 20000;
+let near = 0.1;
 
 let vBuffer;
 let nBuffer;
+let tBuffer;
 let iBuffer;
 
 let V, P, N;
@@ -19,8 +20,6 @@ let at = vec3(0.0, 0.0, 0.0);
 let up = vec3(0.0, 1.0, 0.0);
 let animationRequestId;
 
-let kdcol = vec4(0.8, 0.8, 0.8, 1.0);
-let kacol = vec4(0.7, 0.5, 0.2, 1.0);
 let kscol = vec4(1.0, 1.0, 1.0, 1.0);
 
 let ka_val = 0.9;
@@ -152,6 +151,15 @@ window.onload = main = async () => {
   gl.vertexAttribPointer(vPosition, 4, gl.FLOAT, false, 0, 0);
   gl.enableVertexAttribArray(vPosition);
 
+
+  tBuffer = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, tBuffer);
+  
+
+  let texPointer = gl.getAttribLocation(program, "TexCoords");
+    gl.vertexAttribPointer(texPointer, 2, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(texPointer);  
+ 
   nBuffer = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, nBuffer);
 
@@ -166,8 +174,6 @@ window.onload = main = async () => {
   textureLocation = gl.getUniformLocation(program, "texture");
 
   gl.uniform4fv(gl.getUniformLocation(program, "ksColor"), flatten(kscol));
-  gl.uniform4fv(gl.getUniformLocation(program, "kaColor"), flatten(kacol));
-  gl.uniform4fv(gl.getUniformLocation(program, "kdColor"), flatten(kdcol));
 
   gl.uniform1f(gl.getUniformLocation(program, "kd"), kd_val);
   gl.uniform1f(gl.getUniformLocation(program, "ks"), ka_val);
@@ -262,11 +268,6 @@ const renderScene = async () => {
     } else {
       gl.uniform1f(gl.getUniformLocation(program, "isSun"), false);
     }
-    if (planetName == "Earth") {
-      gl.uniform1f(gl.getUniformLocation(program, "isEarth"), true);
-    } else {
-      gl.uniform1f(gl.getUniformLocation(program, "isEarth"), false);
-    }
 
     gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);
     gl.bufferData(
@@ -286,9 +287,12 @@ const renderScene = async () => {
   });
 
   gl.uniform1f(gl.getUniformLocation(program, "isSkybox"), true);
-  let skybox = drawCube(vec3(-200.0, -200.0, -150.0), 1000, 800, 800);
+  let skybox = drawCube(vec3(-600.0, -600.0, -1000.0), 1000, 1000, 1000);
   let skybox_vertices = skybox[0];
-  let skybox_texture = skybox[1];
+  let skybox_tex_coords = skybox[1];
+ 
+  gl.bindBuffer(gl.ARRAY_BUFFER, tBuffer);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(flatten(skybox_tex_coords)), gl.STATIC_DRAW);
 
   gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);
   gl.bufferData(gl.ARRAY_BUFFER, flatten(skybox_vertices), gl.STATIC_DRAW);
