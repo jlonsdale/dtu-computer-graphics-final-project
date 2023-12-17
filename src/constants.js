@@ -200,7 +200,7 @@ function drawCube(origin, width, height, depth) {
 
   // front
   vertices.push(vec4(origin[0], origin[1], origin[2], 1));
-  vertices.push(vec4(origin[0] + width, origin[1], origin[2], 1));
+  vertices.push(vec4(origin[0] + width, origin[1]+height, origin[2], 1));
   vertices.push(vec4(origin[0], origin[1] + height, origin[2], 1));
 
   vertices.push(vec4(origin[0], origin[1], origin[2], 1));
@@ -267,13 +267,16 @@ function drawCube(origin, width, height, depth) {
   //
   textureCoords = [];
 
+  for (let i = 0; i < 6; i++) {
   textureCoords.push(vec2(0.0, 0.0));
-  textureCoords.push(vec2(0.0, 10.0));
-  textureCoords.push(vec2(10.0, 10.0));
+  textureCoords.push(vec2(0.0, 600.0));
+  textureCoords.push(vec2(600.0, 600.0));
 
-  textureCoords.push(vec2(0.0, 10.0));
-  textureCoords.push(vec2(10.0, 10.0));
-  textureCoords.push(vec2(10.0, 0.0));
+  textureCoords.push(vec2(0.0, 600.0));
+  textureCoords.push(vec2(600.0, 600.0));
+  textureCoords.push(vec2(600.0, 0.0));
+  }
+ 
 
   return [vertices, textureCoords];
 }
